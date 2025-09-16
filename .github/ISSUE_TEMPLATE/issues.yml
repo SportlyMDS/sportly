@@ -1,32 +1,31 @@
-name: 📌 Nouvelle fonctionnalité / tâche
-about: Décrire une nouvelle fonctionnalité ou une tâche à réaliser dans le cadre du projet (Kanban)
+name: "✨ Nouvelle fonctionnalité / tâche"
+description: Créer une issue pour décrire une nouvelle fonctionnalité ou tâche à réaliser (Kanban)
 title: "[Feature] "
-labels: ""
-assignees: ""
+labels: []
+assignees: []
 
 body:
   - type: markdown
     attributes:
-      value: "## ✨ Description de la fonctionnalité"
+      value: |
+        ## 🚀 Nouvelle fonctionnalité / tâche
+        Merci de décrire clairement la fonctionnalité que vous souhaitez ajouter.  
+        Cette issue sera utilisée dans le cadre de notre gestion de projet **Kanban**.  
 
   - type: textarea
-    id: description
+    id: feature-description
     attributes:
-      label: Décris la fonctionnalité
-      description: Explique clairement la fonctionnalité ou la tâche à réaliser et pourquoi elle est nécessaire.
+      label: Description de la fonctionnalité
+      description: Explique la fonctionnalité ou tâche, pourquoi elle est nécessaire, et quel est son objectif.
       placeholder: "Exemple : En tant qu’utilisateur, je veux pouvoir filtrer les résultats afin de trouver rapidement ce que je cherche."
     validations:
       required: true
 
-  - type: markdown
-    attributes:
-      value: "## ✅ Critères d’acceptation"
-
   - type: textarea
-    id: criteres
+    id: acceptance-criteria
     attributes:
-      label: Conditions de validation
-      description: Indique les conditions à remplir pour considérer la fonctionnalité comme terminée.
+      label: Critères d’acceptation
+      description: Liste les conditions qui doivent être remplies pour considérer la fonctionnalité comme terminée.
       placeholder: |
         - [ ] Le filtre s’applique correctement aux résultats
         - [ ] Le design respecte la maquette
@@ -34,15 +33,43 @@ body:
     validations:
       required: false
 
-  - type: markdown
-    attributes:
-      value: "## 📋 Notes complémentaires"
-
   - type: textarea
-    id: notes
+    id: technical-notes
     attributes:
-      label: Informations supplémentaires
-      description: Ajoute ici des détails techniques, des dépendances, ou des remarques utiles.
+      label: Notes techniques / dépendances
+      description: Détaille ici les contraintes techniques, dépendances, tickets liés ou autres remarques utiles.
       placeholder: "Exemple : dépend de l’issue #12"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: kanban-column
+    attributes:
+      label: Colonne Kanban suggérée
+      description: Choisis la colonne où placer cette issue dans le tableau Kanban.
+      options:
+        - Backlog
+        - To do
+        - In progress
+        - Review
+        - Done
+    validations:
+      required: false
+
+  - type: input
+    id: assignee
+    attributes:
+      label: Assigné (optionnel)
+      description: Indique le ou les responsables de cette issue (ex: @utilisateur).
+      placeholder: "@username"
+    validations:
+      required: false
+
+  - type: input
+    id: labels
+    attributes:
+      label: Labels (optionnel)
+      description: Ajoute un ou plusieurs labels pour catégoriser cette issue.
+      placeholder: "enhancement, frontend, backend, priority:high"
     validations:
       required: false
