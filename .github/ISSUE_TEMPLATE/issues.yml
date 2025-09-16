@@ -1,5 +1,5 @@
 name: "✨ Nouvelle fonctionnalité / tâche"
-description: Créer une issue pour décrire une nouvelle fonctionnalité ou tâche à réaliser (Kanban)
+description: "Créer une issue pour décrire une nouvelle fonctionnalité ou tâche à réaliser (Kanban)"
 title: "[Feature] "
 labels: []
 assignees: []
@@ -15,8 +15,8 @@ body:
   - type: textarea
     id: feature-description
     attributes:
-      label: Description de la fonctionnalité
-      description: Explique la fonctionnalité ou tâche, pourquoi elle est nécessaire, et quel est son objectif.
+      label: "Description de la fonctionnalité"
+      description: "Explique la fonctionnalité ou tâche, pourquoi elle est nécessaire, et quel est son objectif."
       placeholder: "Exemple : En tant qu’utilisateur, je veux pouvoir filtrer les résultats afin de trouver rapidement ce que je cherche."
     validations:
       required: true
@@ -24,8 +24,8 @@ body:
   - type: textarea
     id: acceptance-criteria
     attributes:
-      label: Critères d’acceptation
-      description: Liste les conditions qui doivent être remplies pour considérer la fonctionnalité comme terminée.
+      label: "Critères d’acceptation"
+      description: "Liste les conditions qui doivent être remplies pour considérer la fonctionnalité comme terminée."
       placeholder: |
         - [ ] Le filtre s’applique correctement aux résultats
         - [ ] Le design respecte la maquette
@@ -36,8 +36,8 @@ body:
   - type: textarea
     id: technical-notes
     attributes:
-      label: Notes techniques / dépendances
-      description: Détaille ici les contraintes techniques, dépendances, tickets liés ou autres remarques utiles.
+      label: "Notes techniques / dépendances"
+      description: "Détaille ici les contraintes techniques, dépendances, tickets liés ou autres remarques utiles."
       placeholder: "Exemple : dépend de l’issue #12"
     validations:
       required: false
@@ -45,22 +45,22 @@ body:
   - type: dropdown
     id: kanban-column
     attributes:
-      label: Colonne Kanban suggérée
-      description: Choisis la colonne où placer cette issue dans le tableau Kanban.
+      label: "Colonne Kanban suggérée"
+      description: "Choisis la colonne où placer cette issue dans le tableau Kanban."
       options:
-        - Backlog
-        - To do
-        - In progress
-        - Review
-        - Done
+        - "Backlog"
+        - "To do"
+        - "In progress"
+        - "Review"
+        - "Done"
     validations:
       required: false
 
   - type: input
     id: assignee
     attributes:
-      label: Assigné (optionnel)
-      description: Indique le ou les responsables de cette issue (ex: @utilisateur).
+      label: "Assigné (optionnel)"
+      description: "Indique le ou les responsables de cette issue (ex: @utilisateur)."
       placeholder: "@username"
     validations:
       required: false
@@ -68,8 +68,8 @@ body:
   - type: input
     id: labels
     attributes:
-      label: Labels (optionnel)
-      description: Ajoute un ou plusieurs labels pour catégoriser cette issue.
+      label: "Labels (optionnel)"
+      description: "Ajoute un ou plusieurs labels pour catégoriser cette issue."
       placeholder: "enhancement, frontend, backend, priority:high"
     validations:
       required: false
