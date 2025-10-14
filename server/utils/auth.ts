@@ -38,9 +38,24 @@ export function serverAuth() {
       account: {
         accountLinking: {
           enabled: true
+        },
+        fields: {
+          userId: 'accountId'
         }
       },
       user: {
+        additionalFields: {
+          accountType: {
+            type: 'string',
+            required: true,
+            defaultValue: 'USER',
+            input: false // L'utilisateur ne peut pas définir ce champ directement
+          },
+          phone: {
+            type: 'string',
+            required: false
+          }
+        },
         deleteUser: {
           enabled: true
         }

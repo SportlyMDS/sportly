@@ -1,9 +1,7 @@
-import { useAuth } from '~/composables/useAuth'
-
 export default defineNuxtRouteMiddleware(() => {
-  const { loggedIn, options } = useAuth()
+  const { loggedIn } = useAuth()
 
   if (!loggedIn.value) {
-    return navigateTo(options.redirectUserTo || '/')
+    return navigateTo('/')
   }
 })
