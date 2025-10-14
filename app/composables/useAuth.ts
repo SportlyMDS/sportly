@@ -2,6 +2,7 @@ import { createAuthClient } from 'better-auth/vue'
 import type { RouteLocationRaw } from 'vue-router'
 import { defu } from 'defu'
 import type { ClientOptions, InferSessionFromClient, InferUserFromClient } from 'better-auth'
+import type { Ref, ComputedRef } from 'vue'
 
 /**
  * Composable d'authentification pour Sportly
@@ -13,7 +14,20 @@ interface RuntimeAuthConfig {
   redirectClubTo: RouteLocationRaw | string
   redirectDefaultTo: RouteLocationRaw | string
 }
-export const useAuth = () => {
+
+interface UseAuthReturn {
+  session: Ref<InferSessionFromClient<ClientOptions> | null>
+  user: Ref<InferUserFromClient<ClientOptions> | null>
+  loggedIn: ComputedRef<boolean>
+  signIn: ReturnType<typeof createAuthClient>['signIn']
+  signUp: ReturnType<typeof createAuthClient>['signUp']
+  signOut: (options?: { redirectTo?: RouteLocationRaw }) => Promise<any>
+  options: RuntimeAuthConfig
+  fetchSession: () => Promise<any>
+  client: ReturnType<typeof createAuthClient>
+}
+
+export const useAuth = (): UseAuthReturn => {
   // Récupération de la session avec SSR
   const url = useRequestURL()
   const headers = import.meta.server ? useRequestHeaders() : undefined

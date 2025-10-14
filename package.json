@@ -14,10 +14,10 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:generate": "drizzle-kit generate --config=server/db/drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config=server/db/drizzle.config.ts",
+    "db:push": "drizzle-kit push --config=server/db/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=server/db/drizzle.config.ts"
   },
   "dependencies": {
     "@nuxt/eslint": "1.9.0",

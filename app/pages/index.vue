@@ -83,6 +83,7 @@ async function onSignIn(payload: FormSubmitEvent<SignInSchema>) {
         title: 'Connexion réussie',
         color: 'success'
       })
+      await auth.fetchSession()
       await navigateTo('/app/user')
     } else {
       toast.add({
@@ -103,26 +104,28 @@ async function onSignIn(payload: FormSubmitEvent<SignInSchema>) {
 async function onSignUp(payload: FormSubmitEvent<SignUpSchema>) {
   try {
     loading.value = true
-    const { data, error } = await auth.signUp.email({
-      email: payload.data.email,
-      password: payload.data.password,
-      name: payload.data.name
+
+    // Utiliser notre endpoint personnalisé qui crée aussi l'entrée dans users
+    const data = await $fetch('/api/auth/signup', {
+      method: 'POST',
+      body: {
+        email: payload.data.email,
+        password: payload.data.password,
+        name: payload.data.name
+      }
     })
+
     if (data) {
       toast.add({
         title: 'Inscription réussie',
         color: 'success'
       })
+      await auth.fetchSession()
       await navigateTo('/app/user')
-    } else {
-      toast.add({
-        title: error.message,
-        color: 'error'
-      })
     }
   } catch (error: any) {
     toast.add({
-      title: error.message,
+      title: error.data?.message || error.message || 'Erreur lors de l\'inscription',
       color: 'error'
     })
   } finally {

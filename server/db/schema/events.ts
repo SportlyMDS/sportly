@@ -7,7 +7,7 @@ import { eventTypeEnum } from './enums'
 // Table des événements
 export const events = pgTable('events', {
   id: uuid('id').primaryKey().defaultRandom(),
-  organizerId: uuid('organizer_id').notNull().references(() => accounts.id), // club ou user
+  organizerId: text('organizer_id').notNull().references(() => accounts.id), // club ou user
   eventType: eventTypeEnum('event_type').notNull(),
   title: varchar('title', { length: 160 }).notNull(),
   description: text('description'),
@@ -39,7 +39,7 @@ export const eventPhotos = pgTable('event_photos', {
 // Table des participants aux événements
 export const eventParticipants = pgTable('event_participants', {
   eventId: uuid('event_id').notNull().references(() => events.id),
-  userId: uuid('user_id').notNull(), // Référence vers users.account_id
+  userId: text('user_id').notNull(), // Référence vers users.account_id
   status: varchar('status', { length: 20 }).notNull().default('REGISTERED'), // REGISTERED / CANCELLED / ATTENDED
   registeredAt: timestamp('registered_at').defaultNow()
 })
@@ -48,7 +48,7 @@ export const eventParticipants = pgTable('event_participants', {
 export const eventPayments = pgTable('event_payments', {
   id: uuid('id').primaryKey().defaultRandom(),
   eventId: uuid('event_id').notNull().references(() => events.id),
-  userId: uuid('user_id').notNull(), // Référence vers users.account_id
+  userId: text('user_id').notNull(), // Référence vers users.account_id
   amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
   provider: varchar('provider', { length: 40 }).notNull(), // STRIPE
   providerPaymentId: text('provider_payment_id').notNull(),
