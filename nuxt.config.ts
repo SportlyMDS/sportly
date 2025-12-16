@@ -15,6 +15,11 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
+  // Forcer le mode clair par défaut
+  colorMode: {
+    preference: 'light'
+  },
+
   css: ['~/assets/css/main.css'],
 
   // Configuration des variables d'environnement

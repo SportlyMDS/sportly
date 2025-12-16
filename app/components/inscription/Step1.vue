@@ -55,17 +55,23 @@
           placeholder="alex.martin@exemple.fr"
           icon="i-heroicons-envelope"
           :disabled="isLoading"
+          class="w-full"
         />
       </UFormField>
 
       <!-- Mot de passe -->
-      <UFormField label="Mot de passe" name="password">
+      <UFormField
+        label="Mot de passe"
+        name="password"
+        help="Au moins 8 caractères avec majuscule et chiffre"
+      >
         <UInput
           v-model="formState.password"
           :type="showPassword ? 'text' : 'password'"
           placeholder="••••••••"
           icon="i-heroicons-lock-closed"
           :disabled="isLoading"
+          class="w-full"
         >
           <template #trailing>
             <UButton
@@ -77,11 +83,6 @@
             />
           </template>
         </UInput>
-        <template #hint>
-          <span class="text-xs text-gray-400">
-            Au moins 8 caractères avec majuscule et chiffre
-          </span>
-        </template>
       </UFormField>
 
       <!-- Conditions d'utilisation -->
