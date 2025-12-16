@@ -33,12 +33,7 @@
 
       <!-- Formulaire de connexion -->
       <UCard class="p-6">
-        <UForm
-          :schema="loginSchema"
-          :state="loginForm"
-          class="space-y-4"
-          @submit="handleLogin"
-        >
+        <UForm :schema="loginSchema" :state="loginForm" class="space-y-4" @submit="handleLogin">
           <UFormGroup label="Email" name="email" required>
             <UInput
               v-model="loginForm.email"
@@ -69,26 +64,13 @@
           </UFormGroup>
 
           <div class="flex items-center justify-between">
-            <UCheckbox
-              v-model="loginForm.remember"
-              label="Se souvenir de moi"
-            />
-            <UButton
-              variant="link"
-              size="xs"
-              to="/auth/forgot-password"
-            >
+            <UCheckbox v-model="loginForm.remember" label="Se souvenir de moi" />
+            <UButton variant="link" size="xs" to="/auth/forgot-password">
               Mot de passe oublié ?
             </UButton>
           </div>
 
-          <UButton
-            type="submit"
-            block
-            size="lg"
-            :loading="isLoading"
-            :disabled="isLoading"
-          >
+          <UButton type="submit" block size="lg" :loading="isLoading" :disabled="isLoading">
             Se connecter
           </UButton>
         </UForm>
@@ -107,11 +89,7 @@
         <div class="text-center">
           <p class="text-sm text-gray-600 dark:text-gray-400">
             Pas encore de compte ?
-            <UButton
-              variant="link"
-              size="sm"
-              @click="showSignup = true"
-            >
+            <UButton variant="link" size="sm" to="/inscription">
               S'inscrire
             </UButton>
           </p>
@@ -126,25 +104,12 @@
               <h3 class="text-lg font-semibold">
                 Créer un compte {{ accountType === 'USER' ? 'utilisateur' : 'club' }}
               </h3>
-              <UButton
-                variant="ghost"
-                icon="i-heroicons-x-mark"
-                @click="showSignup = false"
-              />
+              <UButton variant="ghost" icon="i-heroicons-x-mark" @click="showSignup = false" />
             </div>
           </template>
 
-          <UForm
-            :schema="signupSchema"
-            :state="signupForm"
-            class="space-y-4"
-            @submit="handleSignup"
-          >
-            <UFormGroup
-              :label="accountType === 'USER' ? 'Nom complet' : 'Nom du club'"
-              name="name"
-              required
-            >
+          <UForm :schema="signupSchema" :state="signupForm" class="space-y-4" @submit="handleSignup">
+            <UFormGroup :label="accountType === 'USER' ? 'Nom complet' : 'Nom du club'" name="name" required>
               <UInput
                 v-model="signupForm.name"
                 :placeholder="accountType === 'USER' ? 'Jean Dupont' : 'Mon Club de Sport'"
@@ -192,10 +157,7 @@
               />
             </UFormGroup>
 
-            <UCheckbox
-              v-model="signupForm.acceptTerms"
-              required
-            >
+            <UCheckbox v-model="signupForm.acceptTerms" required>
               <template #label>
                 J'accepte les
                 <UButton variant="link" size="xs">
@@ -208,13 +170,7 @@
               </template>
             </UCheckbox>
 
-            <UButton
-              type="submit"
-              block
-              size="lg"
-              :loading="isLoading"
-              :disabled="isLoading"
-            >
+            <UButton type="submit" block size="lg" :loading="isLoading" :disabled="isLoading">
               Créer mon compte
             </UButton>
           </UForm>

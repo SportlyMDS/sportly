@@ -4,6 +4,19 @@
 @theme {
   --font-sans: 'Geist', sans-serif;
   --font-mono: 'Jetbrains Mono', monospace;
+
+  /* Palette Tango */
+  --color-tango-50: #fef7ee;
+  --color-tango-100: #fdeed7;
+  --color-tango-200: #fad9ae;
+  --color-tango-300: #f7bd7a;
+  --color-tango-400: #f39744;
+  --color-tango-500: #ef781e;
+  --color-tango-600: #e05f16;
+  --color-tango-700: #ba4714;
+  --color-tango-800: #943a18;
+  --color-tango-900: #773117;
+  --color-tango-950: #40160a;
 }
 
 :root {
