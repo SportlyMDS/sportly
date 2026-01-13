@@ -15,18 +15,19 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
+  css: ['~/assets/css/main.css'],
+
   // Forcer le mode clair par défaut
   colorMode: {
     preference: 'light'
   },
-
-  css: ['~/assets/css/main.css'],
 
   // Configuration des variables d'environnement
   runtimeConfig: {
     // Variables côté serveur uniquement
     betterAuthSecret: process.env.BETTER_AUTH_SECRET,
     databaseUrl: process.env.DATABASE_URL,
+    resendApiKey: process.env.RESEND_API_KEY,
 
     // Variables publiques (exposées côté client)
     public: {
