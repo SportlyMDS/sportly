@@ -14,6 +14,7 @@ export interface InscriptionParticulierData {
   // Step 2: Vérification email
   verificationCode: string
   emailVerified: boolean
+  verificationId: string | null
 
   // Step 3: Zone de recherche
   address: string
@@ -88,6 +89,7 @@ export const useInscription = () => {
       confirmPassword: '',
       verificationCode: '',
       emailVerified: false,
+      verificationId: null,
       address: '',
       latitude: null,
       longitude: null,
@@ -154,6 +156,7 @@ export const useInscription = () => {
         confirmPassword: '',
         verificationCode: '',
         emailVerified: false,
+        verificationId: null,
         address: '',
         latitude: null,
         longitude: null,

@@ -1,81 +1,90 @@
 <template>
-  <div class="space-y-8">
-    <!-- Icône email -->
-    <div class="flex justify-center">
-      <div class="w-20 h-20 bg-tango-50 rounded-full flex items-center justify-center">
+  <div class="flex flex-col flex-1 min-h-0">
+    <!-- Contenu principal centré -->
+    <div class="flex flex-col items-center gap-4">
+      <!-- Icône email -->
+      <div class="w-20 h-20 bg-[#ffedd4] rounded-full flex items-center justify-center">
         <UIcon name="i-heroicons-envelope" class="w-10 h-10 text-tango-500" />
+      </div>
+
+      <!-- Titre et sous-titre -->
+      <div class="text-center space-y-2">
+        <h2 class="text-[30px] font-semibold text-black leading-[45px] font-[Asap]">
+          Vérifiez votre e-mail
+        </h2>
+        <p class="text-base text-[#4a5565] leading-6">
+          Nous avons envoyé un code de vérification à
+        </p>
+        <p class="text-base text-black">
+          {{ data.email }}
+        </p>
+      </div>
+
+      <!-- Code OTP -->
+      <div class="flex justify-center w-full">
+        <UPinInput
+          v-model="otpValue"
+          otp
+          type="number"
+          :length="6"
+          size="xl"
+          :disabled="isLoading"
+          :ui="{
+            base: 'w-12 h-14 rounded-2xl border-2 border-[#e5e7eb] bg-white text-black text-center focus:border-tango-500 focus:ring-0'
+          }"
+          @complete="onSubmit"
+        />
+      </div>
+
+      <!-- Renvoyer le code -->
+      <div class="text-center text-sm text-[#4a5565]">
+        Vous n'avez pas reçu le code ?
+        <button
+          v-if="resendCountdown === 0"
+          type="button"
+          class="text-tango-500 font-bold underline hover:no-underline"
+          :disabled="isLoading"
+          @click="handleResend"
+        >
+          Renvoyer
+        </button>
+        <span v-else class="text-gray-400">
+          Renvoyer ({{ resendCountdown }}s)
+        </span>
       </div>
     </div>
 
-    <!-- Titre et sous-titre -->
-    <div class="text-center">
-      <h2 class="text-2xl font-semibold text-gray-900">
-        Vérifiez votre e-mail
-      </h2>
-      <p class="mt-2 text-sm text-gray-500">
-        Nous avons envoyé un code de vérification à
-      </p>
-      <p class="text-sm font-medium text-gray-700">
-        {{ data.email }}
-      </p>
-    </div>
+    <!-- Spacer flexible -->
+    <div class="flex-1" />
 
-    <!-- Code OTP -->
-    <div class="flex justify-center">
-      <UPinInput
-        v-model="otpValue"
-        otp
-        type="number"
-        :length="6"
-        size="xl"
-        :disabled="isLoading"
+    <!-- Section basse avec alerte et bouton -->
+    <div class="flex flex-col gap-8">
+      <!-- Alerte spam -->
+      <UAlert
+        title="💌 Pensez à vérifier vos spams si vous ne voyez pas l'e-mail"
+        color="info"
+        variant="outline"
         :ui="{
-          base: 'rounded-lg text-black bg-gray-50 ring-1 ring-gray-200 focus:ring-2 focus:ring-tango-500'
+          root: 'bg-[#eff6ff] border-2 border-[#dbeafe] rounded-2xl px-[18px] py-[18px]',
+          title: 'text-[#1447e6] text-sm font-normal leading-5'
         }"
       />
-    </div>
 
-    <!-- Renvoyer le code -->
-    <div class="text-center text-sm text-gray-500">
-      Vous n'avez pas reçu le code ?
-      <button
-        v-if="resendCountdown === 0"
-        type="button"
-        class="text-tango-500 font-medium hover:underline"
-        :disabled="isLoading"
-        @click="handleResend"
+      <!-- Bouton Continuer -->
+      <UButton
+        block
+        size="lg"
+        :loading="isLoading"
+        :disabled="isLoading || otpValue.length !== 6"
+        :class="[
+          'rounded-full py-2.5 font-semibold',
+          otpValue.length === 6 ? 'bg-tango-500 hover:bg-tango-600 text-white' : 'bg-[#d5d7da] text-[#212121] cursor-not-allowed'
+        ]"
+        @click="onSubmit"
       >
-        Renvoyer
-      </button>
-      <span v-else class="text-gray-400">
-        Renvoyer ({{ resendCountdown }}s)
-      </span>
+        Continuer
+      </UButton>
     </div>
-
-    <!-- Alerte spam -->
-    <UAlert
-      icon="i-heroicons-envelope"
-      color="warning"
-      variant="soft"
-      title="Pensez à vérifier vos spams si vous ne voyez pas l'e-mail"
-      :ui="{
-        root: 'bg-tango-50 border-0',
-        icon: 'text-tango-500',
-        title: 'text-tango-700 text-sm font-normal'
-      }"
-    />
-
-    <!-- Bouton Continuer -->
-    <UButton
-      block
-      size="lg"
-      :loading="isLoading"
-      :disabled="isLoading || otpValue.length !== 6"
-      :class="otpValue.length === 6 ? 'bg-tango-500 hover:bg-tango-600' : 'bg-gray-200 text-gray-500'"
-      @click="onSubmit"
-    >
-      Continuer
-    </UButton>
   </div>
 </template>
 

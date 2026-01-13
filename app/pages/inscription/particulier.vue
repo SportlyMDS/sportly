@@ -1,12 +1,10 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="flex flex-col h-dvh bg-white">
     <!-- Header avec logo et progression -->
-    <div class="bg-white">
+    <header class="shrink-0">
       <!-- Logo centré -->
-      <div class="max-w-2xl mx-auto px-4 py-4">
-        <div class="flex justify-center">
-          <img src="/long-logo.png" alt="Sportly" class="h-8">
-        </div>
+      <div class="flex justify-center px-4 py-4">
+        <img src="/long-logo.png" alt="Sportly" class="h-7">
       </div>
 
       <!-- Progress bar pleine largeur, très fine -->
@@ -20,22 +18,21 @@
         }"
       />
 
-      <!-- Navigation et étapes -->
-      <div class="max-w-2xl mx-auto px-4 py-4">
+      <!-- Navigation retour -->
+      <div class="px-4 py-4">
         <UButton
           class="text-gray-500"
           variant="ghost"
           icon="i-heroicons-arrow-left"
-          :to="currentStep === 1 ? '/inscription' : undefined"
-          @click="currentStep > 1 && prevStep()"
+          @click="handleBack"
         >
           Retour
         </UButton>
       </div>
-    </div>
+    </header>
 
-    <!-- Contenu de l'étape -->
-    <div class="max-w-2xl mx-auto px-4 py-2 bg-white">
+    <!-- Contenu de l'étape - prend tout l'espace restant -->
+    <main class="flex-1 flex flex-col min-h-0 px-4 pb-8">
       <Transition name="slide" mode="out-in">
         <InscriptionStep1
           v-if="currentStep === 1"
@@ -60,7 +57,7 @@
           @submit="handleFinalSubmit"
         />
       </Transition>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -77,6 +74,8 @@ useSeoMeta({
   description: 'Créez votre compte particulier sur Sportly.'
 })
 
+const router = useRouter()
+
 const {
   state,
   currentStep,
@@ -84,6 +83,14 @@ const {
   nextStep,
   updateData
 } = useInscription()
+
+const handleBack = () => {
+  if (currentStep.value === 1) {
+    router.push('/inscription')
+  } else {
+    prevStep()
+  }
+}
 
 const toast = useToast()
 
@@ -95,25 +102,19 @@ const handleUpdate = <K extends keyof InscriptionParticulierData>(
   updateData(key, value)
 }
 
-// Step 1: Création du compte
+// Step 1: Envoi du code OTP
 const handleStep1Submit = async () => {
   state.value.isLoading = true
   state.value.error = null
 
   try {
-    // TODO: Appel API pour créer le compte
-    // await $fetch('/api/auth/signup', {
-    //   method: 'POST',
-    //   body: {
-    //     firstName: state.value.data.firstName,
-    //     lastName: state.value.data.lastName,
-    //     email: state.value.data.email,
-    //     password: state.value.data.password
-    //   }
-    // })
-
-    // Simuler l'envoi du code de vérification
-    console.log('Compte créé, code envoyé à:', state.value.data.email)
+    await $fetch('/api/auth/send-otp', {
+      method: 'POST',
+      body: {
+        email: state.value.data.email,
+        firstName: state.value.data.firstName
+      }
+    })
 
     toast.add({
       title: 'Code envoyé',
@@ -122,11 +123,12 @@ const handleStep1Submit = async () => {
     })
 
     nextStep()
-  } catch (error) {
-    console.error('Erreur création compte:', error)
+  } catch (error: any) {
+    console.error('Erreur envoi OTP:', error)
+    const message = error.data?.message || 'Une erreur est survenue lors de l\'envoi du code'
     toast.add({
       title: 'Erreur',
-      description: 'Une erreur est survenue lors de la création du compte',
+      description: message,
       color: 'error'
     })
   } finally {
@@ -140,18 +142,16 @@ const handleStep2Submit = async () => {
   state.value.error = null
 
   try {
-    // TODO: Appel API pour vérifier le code
-    // await $fetch('/api/auth/verify-email', {
-    //   method: 'POST',
-    //   body: {
-    //     email: state.value.data.email,
-    //     code: state.value.data.verificationCode
-    //   }
-    // })
+    const result = await $fetch<{ success: boolean, message: string, verificationId: string }>('/api/auth/verify-otp', {
+      method: 'POST',
+      body: {
+        email: state.value.data.email,
+        code: state.value.data.verificationCode
+      }
+    })
 
-    // Simuler la vérification
-    console.log('Code vérifié:', state.value.data.verificationCode)
     state.value.data.emailVerified = true
+    state.value.data.verificationId = result.verificationId
 
     toast.add({
       title: 'Email vérifié',
@@ -160,11 +160,12 @@ const handleStep2Submit = async () => {
     })
 
     nextStep()
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur vérification:', error)
+    const message = error.data?.message || 'Le code de vérification est incorrect'
     toast.add({
       title: 'Code invalide',
-      description: 'Le code de vérification est incorrect',
+      description: message,
       color: 'error'
     })
   } finally {
@@ -177,24 +178,25 @@ const handleResendCode = async () => {
   state.value.isLoading = true
 
   try {
-    // TODO: Appel API pour renvoyer le code
-    // await $fetch('/api/auth/resend-code', {
-    //   method: 'POST',
-    //   body: { email: state.value.data.email }
-    // })
-
-    console.log('Code renvoyé à:', state.value.data.email)
+    await $fetch('/api/auth/send-otp', {
+      method: 'POST',
+      body: {
+        email: state.value.data.email,
+        firstName: state.value.data.firstName
+      }
+    })
 
     toast.add({
       title: 'Code renvoyé',
       description: `Un nouveau code a été envoyé à ${state.value.data.email}`,
       color: 'success'
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur renvoi code:', error)
+    const message = error.data?.message || 'Impossible de renvoyer le code'
     toast.add({
       title: 'Erreur',
-      description: 'Impossible de renvoyer le code',
+      description: message,
       color: 'error'
     })
   } finally {
