@@ -71,20 +71,20 @@ const allClubs = reactive([
 
 // Filtered clubs based on search and filters
 const filteredClubs = computed(() => {
-  return allClubs.filter(club => {
+  return allClubs.filter((club) => {
     // Search filter
     const query = searchQuery.value.toLowerCase()
-    const matchesSearch = !searchQuery.value ||
-      club.name.toLowerCase().includes(query) ||
-      club.sports.some(s => s.name.toLowerCase().includes(query))
-    
+    const matchesSearch = !searchQuery.value
+      || club.name.toLowerCase().includes(query)
+      || club.sports.some(s => s.name.toLowerCase().includes(query))
+
     // Favorites filter
     const matchesFavorites = !showFavoritesOnly.value || club.isFavorite
-    
+
     // Category filter
-    const matchesCategory = !selectedCategory.value ||
-      club.sports.some(s => s.name === selectedCategory.value)
-    
+    const matchesCategory = !selectedCategory.value
+      || club.sports.some(s => s.name === selectedCategory.value)
+
     return matchesSearch && matchesFavorites && matchesCategory
   })
 })
@@ -177,12 +177,20 @@ function toggleFavorite(club: typeof allClubs[0]) {
             @click="showDistanceDropdown = !showDistanceDropdown"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <circle
+                cx="12"
+                cy="10"
+                r="3"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
             <span>Rayon | {{ selectedDistance }}</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
-              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
           <div
@@ -209,14 +217,38 @@ function toggleFavorite(club: typeof allClubs[0]) {
           >
             <div class="flex items-center gap-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
-                <line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <line x1="4" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line
+                  x1="4"
+                  y1="6"
+                  x2="20"
+                  y2="6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="4"
+                  y1="12"
+                  x2="20"
+                  y2="12"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="4"
+                  y1="18"
+                  x2="20"
+                  y2="18"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
               </svg>
               <span>{{ selectedCategory || 'Catégories' }}</span>
             </div>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
-              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
           <div
@@ -334,7 +366,9 @@ function toggleFavorite(club: typeof allClubs[0]) {
         class="flex flex-col items-center justify-center py-12 text-center"
       >
         <span class="text-4xl mb-4">🔍</span>
-        <p class="text-[#545454] font-roboto">Aucun club trouvé pour "{{ searchQuery }}"</p>
+        <p class="text-[#545454] font-roboto">
+          Aucun club trouvé pour "{{ searchQuery }}"
+        </p>
       </div>
     </div>
 
@@ -345,9 +379,27 @@ function toggleFavorite(club: typeof allClubs[0]) {
     >
       <span class="text-base font-medium text-[#1c1c1c] font-roboto">Carte</span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-[#1c1c1c]">
-        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="8" y1="2" x2="8" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="16" y1="6" x2="16" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line
+          x1="8"
+          y1="2"
+          x2="8"
+          y2="18"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <line
+          x1="16"
+          y1="6"
+          x2="16"
+          y2="22"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </svg>
     </NuxtLink>
   </div>
