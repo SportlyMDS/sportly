@@ -1,73 +1,73 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-lg w-full space-y-8">
-      <!-- Header -->
-      <div class="text-center">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-          Rejoignez Sportly
+  <div class="min-h-screen flex flex-col bg-white">
+    <!-- Header with logo -->
+    <header class="sticky top-0 bg-white z-10">
+      <div class="flex items-center justify-between p-4">
+        <NuxtLink to="/">
+          <img src="/long-logo.png" alt="Sportly" class="h-7 w-auto">
+        </NuxtLink>
+      </div>
+      <!-- Progress bar -->
+      <div class="h-[2px] bg-transparent">
+        <div class="h-full w-1/4 bg-tango-500" />
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-1 flex flex-col px-4 pb-8 pt-4">
+      <!-- Back button -->
+      <button
+        type="button"
+        class="flex items-center gap-2 text-gray-900 mb-8"
+        @click="$router.back()"
+      >
+        <UIcon name="i-heroicons-chevron-left" class="size-6" />
+        <span class="text-base">Retour</span>
+      </button>
+
+      <!-- Title section -->
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-semibold text-gray-900 font-['Asap']">
+          Qui êtes-vous ?
         </h1>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Choisissez votre type de profil pour commencer
+        <p class="mt-2 text-base text-gray-500">
+          Choisissez le type de profil qui vous correspond
         </p>
       </div>
 
-      <!-- Sélection du type de profil -->
-      <div class="grid gap-4">
-        <UCard
-          class="cursor-pointer hover:ring-2 hover:ring-primary-500 transition-all"
-          @click="selectProfileType('particulier')"
-        >
-          <div class="flex items-center gap-4">
-            <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
-              <UIcon name="i-heroicons-user" class="w-6 h-6 text-primary-600 dark:text-primary-400" />
-            </div>
-            <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Particulier
-              </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                Je recherche des activités sportives près de chez moi
-              </p>
-            </div>
-            <UIcon name="i-heroicons-chevron-right" class="w-5 h-5 text-gray-400" />
-          </div>
-        </UCard>
+      <!-- Profile type selection -->
+      <div class="flex flex-col gap-4 mb-8">
+        <CardCheckbox
+          v-model="isParticulier"
+          title="Particulier"
+          description="Je recherche des activités sportives près de chez moi"
+          icon="i-heroicons-user"
+          @update:model-value="handleParticulierSelect"
+        />
 
-        <UCard
-          class="cursor-pointer hover:ring-2 hover:ring-primary-500 transition-all"
-          @click="selectProfileType('club')"
-        >
-          <div class="flex items-center gap-4">
-            <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
-              <UIcon name="i-heroicons-building-office" class="w-6 h-6 text-primary-600 dark:text-primary-400" />
-            </div>
-            <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Club / Salle
-              </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                Je propose des activités sportives et souhaite attirer de nouveaux membres
-              </p>
-            </div>
-            <UIcon name="i-heroicons-chevron-right" class="w-5 h-5 text-gray-400" />
-          </div>
-        </UCard>
+        <CardCheckbox
+          v-model="isClub"
+          title="Club / Salle"
+          description="Je propose des activités et gère mes réservations"
+          icon="i-heroicons-building-office-2"
+          @update:model-value="handleClubSelect"
+        />
       </div>
 
-      <!-- Lien vers connexion -->
-      <div class="text-center">
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          Vous avez déjà un compte ?
-          <UButton
-            variant="link"
-            size="sm"
-            to="/auth/login"
-          >
-            Se connecter
-          </UButton>
-        </p>
-      </div>
-    </div>
+      <!-- Spacer -->
+      <div class="flex-1" />
+
+      <!-- Continue button -->
+      <UButton
+        block
+        size="lg"
+        :disabled="!selectedType"
+        class="rounded-full"
+        @click="continueToNextStep"
+      >
+        Continuer
+      </UButton>
+    </main>
   </div>
 </template>
 
@@ -82,10 +82,33 @@ useSeoMeta({
   description: 'Créez votre compte Sportly et rejoignez la communauté sportive.'
 })
 
-const selectProfileType = (type: 'particulier' | 'club') => {
-  navigateTo({
-    path: `/inscription/${type}`,
-    query: { step: '1' }
-  })
+const isParticulier = ref(false)
+const isClub = ref(false)
+
+const selectedType = computed(() => {
+  if (isParticulier.value) return 'particulier'
+  if (isClub.value) return 'club'
+  return null
+})
+
+const handleParticulierSelect = (value: boolean | 'indeterminate') => {
+  if (value === true) {
+    isClub.value = false
+  }
+}
+
+const handleClubSelect = (value: boolean | 'indeterminate') => {
+  if (value === true) {
+    isParticulier.value = false
+  }
+}
+
+const continueToNextStep = () => {
+  if (selectedType.value) {
+    navigateTo({
+      path: `/inscription/${selectedType.value}`,
+      query: { step: '1' }
+    })
+  }
 }
 </script>

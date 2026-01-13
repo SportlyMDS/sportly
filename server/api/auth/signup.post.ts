@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { useDrizzle } from '../../utils/drizzle'
 import { users } from '../../db/schema'
 import { auth } from '../../utils/auth'
+import { sendWelcomeEmail } from '../../services/email'
 
 const signUpSchema = z.object({
   email: z.string().email(),
@@ -52,6 +53,11 @@ export default defineEventHandler(async (event) => {
       accountId,
       firstName,
       lastName
+    })
+
+    // Envoyer l'email de bienvenue (non-bloquant)
+    sendWelcomeEmail(validatedData.email, firstName).catch((err) => {
+      console.error('Erreur envoi email de bienvenue:', err)
     })
 
     return {
