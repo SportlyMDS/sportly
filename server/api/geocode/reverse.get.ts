@@ -24,7 +24,7 @@ export default defineEventHandler(async (event): Promise<NominatimResponse> => {
         format: 'json'
       },
       headers: {
-        'User-Agent': 'Sportly/1.0 (contact@sportly.fr)'
+        'User-Agent': 'Sportly/1.0 (contact@sportly.dev)'
       }
     })
 

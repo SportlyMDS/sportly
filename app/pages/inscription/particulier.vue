@@ -124,7 +124,6 @@ const handleStep1Submit = async () => {
 
     nextStep()
   } catch (error: any) {
-    console.error('Erreur envoi OTP:', error)
     const message = error.data?.message || 'Une erreur est survenue lors de l\'envoi du code'
     toast.add({
       title: 'Erreur',
@@ -210,19 +209,19 @@ const handleFinalSubmit = async () => {
   state.value.error = null
 
   try {
-    // TODO: Appel API pour finaliser l'inscription
-    // await $fetch('/api/auth/complete-registration', {
-    //   method: 'POST',
-    //   body: {
-    //     email: state.value.data.email,
-    //     address: state.value.data.address,
-    //     latitude: state.value.data.latitude,
-    //     longitude: state.value.data.longitude,
-    //     searchRadius: state.value.data.searchRadius
-    //   }
-    // })
-
-    console.log('Inscription finalisée:', state.value.data)
+    await $fetch('/api/auth/complete-registration', {
+      method: 'POST',
+      body: {
+        verificationId: state.value.data.verificationId,
+        firstName: state.value.data.firstName,
+        lastName: state.value.data.lastName,
+        password: state.value.data.password,
+        address: state.value.data.address,
+        latitude: state.value.data.latitude,
+        longitude: state.value.data.longitude,
+        searchRadius: state.value.data.searchRadius
+      }
+    })
 
     toast.add({
       title: 'Inscription réussie !',

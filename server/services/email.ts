@@ -62,7 +62,7 @@ export async function sendWelcomeEmail(to: string, firstName: string): Promise<E
       </ul>
       
       <div style="text-align: center; margin: 30px 0;">
-        <a href="https://sportly.fr" style="background-color: #ef781e; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 600;">Commencer à explorer</a>
+        <a href="https://sportly.dev" style="background-color: #ef781e; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 600;">Commencer à explorer</a>
       </div>
       
       <p style="color: #666; font-size: 14px;">À très bientôt sur Sportly !</p>
