@@ -2,8 +2,8 @@ import { useResend } from '../utils/resend'
 
 // En dev, utiliser l'email de test Resend. En prod, utiliser le domaine vérifié.
 const FROM_EMAIL = process.env.NODE_ENV === 'production'
-  ? 'Sportly <noreply@sportly.fr>'
-  : 'Sportly <onboarding@resend.dev>'
+  ? 'Sportly <noreply@sportly.dev>'
+  : 'Sportly <noreply@sportly.dev>'
 
 interface SendEmailOptions {
   to: string | string[]
