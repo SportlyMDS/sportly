@@ -17,9 +17,8 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  // Forcer le mode clair par défaut
-  colorMode: {
-    preference: 'light'
+  ui: {
+    colorMode: false
   },
 
   // Configuration des variables d'environnement
