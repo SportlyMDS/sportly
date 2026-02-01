@@ -81,12 +81,9 @@ export default defineEventHandler(async (event) => {
     })
 
     // Envoyer l'email avec le code
-    console.log('Envoi OTP à:', email, 'code:', otpCode)
     const emailResult = await sendVerificationEmail(email, otpCode, firstName)
-    console.log('Résultat envoi email:', emailResult)
 
     if (!emailResult.success) {
-      console.error('Erreur envoi email OTP:', emailResult.error)
       throw createError({
         statusCode: 500,
         message: 'Erreur lors de l\'envoi de l\'email'
@@ -104,7 +101,6 @@ export default defineEventHandler(async (event) => {
       throw error
     }
 
-    console.error('Erreur send-otp:', error)
     throw createError({
       statusCode: 500,
       message: 'Erreur lors de l\'envoi du code de vérification'
