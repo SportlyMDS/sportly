@@ -34,14 +34,14 @@
     <!-- Contenu de l'étape - prend tout l'espace restant -->
     <main class="flex-1 flex flex-col min-h-0 px-4 pb-8">
       <Transition name="slide" mode="out-in">
-        <InscriptionStep1
+        <InscriptionParticulierStep1
           v-if="currentStep === 1"
           :data="state.data"
           :is-loading="state.isLoading"
           @update="handleUpdate"
           @next="handleStep1Submit"
         />
-        <InscriptionStep2
+        <InscriptionParticulierStep2
           v-else-if="currentStep === 2"
           :data="state.data"
           :is-loading="state.isLoading"
@@ -49,7 +49,7 @@
           @next="handleStep2Submit"
           @resend="handleResendCode"
         />
-        <InscriptionStep3
+        <InscriptionParticulierStep3
           v-else-if="currentStep === 3"
           :data="state.data"
           :is-loading="state.isLoading"

@@ -1,3 +1,48 @@
+<script setup lang="ts">
+import type { InscriptionParticulierData } from '~/composables/useInscription'
+
+const props = defineProps<{
+  data: InscriptionParticulierData
+  isLoading: boolean
+}>()
+
+const emit = defineEmits<{
+  update: [key: keyof InscriptionParticulierData, value: any]
+  next: []
+  resend: []
+}>()
+
+const otpValue = ref<number[]>(props.data.verificationCode ? props.data.verificationCode.split('').map(Number) : [])
+const resendCountdown = ref(0)
+
+let countdownInterval: ReturnType<typeof setInterval> | null = null
+
+watch(otpValue, (newVal) => {
+  emit('update', 'verificationCode', newVal.join(''))
+}, { deep: true })
+
+const handleResend = () => {
+  emit('resend')
+  resendCountdown.value = 60
+  countdownInterval = setInterval(() => {
+    resendCountdown.value--
+    if (resendCountdown.value <= 0) {
+      if (countdownInterval) clearInterval(countdownInterval)
+    }
+  }, 1000)
+}
+
+const onSubmit = () => {
+  if (otpValue.value.length === 6) {
+    emit('next')
+  }
+}
+
+onUnmounted(() => {
+  if (countdownInterval) clearInterval(countdownInterval)
+})
+</script>
+
 <template>
   <div class="flex flex-col flex-1 min-h-0">
     <!-- Contenu principal centré -->
@@ -87,48 +132,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { InscriptionParticulierData } from '~/composables/useInscription'
-
-const props = defineProps<{
-  data: InscriptionParticulierData
-  isLoading: boolean
-}>()
-
-const emit = defineEmits<{
-  update: [key: keyof InscriptionParticulierData, value: any]
-  next: []
-  resend: []
-}>()
-
-const otpValue = ref<number[]>(props.data.verificationCode ? props.data.verificationCode.split('').map(Number) : [])
-const resendCountdown = ref(0)
-
-let countdownInterval: ReturnType<typeof setInterval> | null = null
-
-watch(otpValue, (newVal) => {
-  emit('update', 'verificationCode', newVal.join(''))
-}, { deep: true })
-
-const handleResend = () => {
-  emit('resend')
-  resendCountdown.value = 60
-  countdownInterval = setInterval(() => {
-    resendCountdown.value--
-    if (resendCountdown.value <= 0) {
-      if (countdownInterval) clearInterval(countdownInterval)
-    }
-  }, 1000)
-}
-
-const onSubmit = () => {
-  if (otpValue.value.length === 6) {
-    emit('next')
-  }
-}
-
-onUnmounted(() => {
-  if (countdownInterval) clearInterval(countdownInterval)
-})
-</script>
