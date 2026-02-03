@@ -3,9 +3,13 @@ definePageMeta({
   layout: false
 })
 
+const { state, resetState } = useInscriptionClub()
+const toast = useToast()
+
 type OfferType = 'essentiel' | 'visibilite'
 
 const selectedOffer = ref<OfferType>('essentiel')
+const isLoading = ref(false)
 
 const offers = {
   essentiel: {
@@ -40,12 +44,55 @@ const offers = {
 }
 
 function goBack() {
-  navigateTo('/inscription/club?step=3')
+  navigateTo('/inscription/club?step=4')
 }
 
-function goNext() {
-  console.log('Selected offer:', selectedOffer.value)
-  navigateTo('/inscription/club/success')
+async function goNext() {
+  if (!state.value.clubId) {
+    toast.add({
+      title: 'Erreur',
+      description: 'Aucun club trouvé. Veuillez recommencer l\'inscription.',
+      color: 'error'
+    })
+    navigateTo('/inscription/club')
+    return
+  }
+
+  isLoading.value = true
+
+  try {
+    const offerType = selectedOffer.value === 'essentiel' ? 'ESSENTIEL' : 'VISIBILITE'
+
+    await $fetch('/api/clubs/offer', {
+      method: 'POST',
+      body: {
+        clubId: state.value.clubId,
+        offerType
+      }
+    })
+
+    toast.add({
+      title: 'Inscription terminée !',
+      description: 'Votre club est maintenant actif sur Sportly',
+      color: 'success'
+    })
+
+    // Reset state and navigate to success
+    resetState()
+    navigateTo('/inscription/club/success')
+  } catch (error: unknown) {
+    console.error('Save offer error:', error)
+    const errorMessage = error && typeof error === 'object' && 'data' in error
+      ? (error.data as { message?: string })?.message || 'Une erreur est survenue'
+      : 'Une erreur est survenue'
+    toast.add({
+      title: 'Erreur',
+      description: errorMessage,
+      color: 'error'
+    })
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -187,6 +234,7 @@ function goNext() {
       <div class="pt-4 border-t border-[#d6d6d6]">
         <UButton
           block
+          :loading="isLoading"
           class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3!"
           @click="goNext"
         >

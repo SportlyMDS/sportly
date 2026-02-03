@@ -15,6 +15,13 @@
       "when": 1768310036784,
       "tag": "0001_spotty_dexter_bennett",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770127891968,
+      "tag": "0002_remarkable_shen",
+      "breakpoints": true
     }
   ]
 }
