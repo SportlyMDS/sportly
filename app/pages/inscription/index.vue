@@ -1,114 +1,109 @@
-<template>
-  <div class="min-h-screen flex flex-col bg-white">
-    <!-- Header with logo -->
-    <header class="sticky top-0 bg-white z-10">
-      <div class="flex items-center justify-between p-4">
-        <NuxtLink to="/">
-          <img src="/long-logo.png" alt="Sportly" class="h-7 w-auto">
-        </NuxtLink>
-      </div>
-      <!-- Progress bar -->
-      <div class="h-[2px] bg-transparent">
-        <div class="h-full w-1/4 bg-tango-500" />
-      </div>
-    </header>
-
-    <!-- Main content -->
-    <main class="flex-1 flex flex-col px-4 pb-8 pt-4">
-      <!-- Back button -->
-      <button
-        type="button"
-        class="flex items-center gap-2 text-gray-900 mb-8"
-        @click="$router.back()"
-      >
-        <UIcon name="i-heroicons-chevron-left" class="size-6" />
-        <span class="text-base">Retour</span>
-      </button>
-
-      <!-- Title section -->
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-semibold text-gray-900 font-['Asap']">
-          Qui êtes-vous ?
-        </h1>
-        <p class="mt-2 text-base text-gray-500">
-          Choisissez le type de profil qui vous correspond
-        </p>
-      </div>
-
-      <!-- Profile type selection -->
-      <div class="flex flex-col gap-4 mb-8">
-        <CardCheckbox
-          v-model="isParticulier"
-          title="Particulier"
-          description="Je recherche des activités sportives près de chez moi"
-          icon="i-heroicons-user"
-          @update:model-value="handleParticulierSelect"
-        />
-
-        <CardCheckbox
-          v-model="isClub"
-          title="Club / Salle"
-          description="Je propose des activités et gère mes réservations"
-          icon="i-heroicons-building-office-2"
-          @update:model-value="handleClubSelect"
-        />
-      </div>
-
-      <!-- Spacer -->
-      <div class="flex-1" />
-
-      <!-- Continue button -->
-      <UButton
-        block
-        size="lg"
-        :disabled="!selectedType"
-        class="rounded-full"
-        @click="continueToNextStep"
-      >
-        Continuer
-      </UButton>
-    </main>
-  </div>
-</template>
-
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'guest',
   layout: false
 })
 
-useSeoMeta({
-  title: 'Inscription - Sportly',
-  description: 'Créez votre compte Sportly et rejoignez la communauté sportive.'
-})
+// État du formulaire
+const selectedProfileType = ref<'particulier' | 'club' | null>(null)
 
-const isParticulier = ref(false)
-const isClub = ref(false)
-
-const selectedType = computed(() => {
-  if (isParticulier.value) return 'particulier'
-  if (isClub.value) return 'club'
-  return null
-})
-
-const handleParticulierSelect = (value: boolean | 'indeterminate') => {
-  if (value === true) {
-    isClub.value = false
-  }
+// Navigation
+function goBack() {
+  navigateTo('/')
 }
 
-const handleClubSelect = (value: boolean | 'indeterminate') => {
-  if (value === true) {
-    isParticulier.value = false
-  }
-}
+function goNext() {
+  if (!selectedProfileType.value) return
 
-const continueToNextStep = () => {
-  if (selectedType.value) {
-    navigateTo({
-      path: `/inscription/${selectedType.value}`,
-      query: { step: '1' }
-    })
+  // Rediriger vers la page d'inscription correspondante
+  if (selectedProfileType.value === 'particulier') {
+    navigateTo('/inscription/particulier')
+  } else {
+    navigateTo('/inscription/club')
   }
 }
 </script>
+
+<template>
+  <div class="w-[393px] min-h-screen bg-white max-w-full overflow-hidden flex flex-col items-center mx-auto">
+    <!-- Header avec logo -->
+    <div class="w-full bg-white flex items-center justify-center p-4 relative">
+      <img
+        class="w-[120px] h-auto object-cover"
+        loading="lazy"
+        alt="Logo Sportly"
+        src="/Nouveau-logo-sportly-1Logo-1@2x.png"
+      >
+      <!-- Barre de progression (étape 1/4) -->
+      <div class="absolute bottom-0 left-0 w-full h-[2px] bg-gray-200">
+        <div class="h-full bg-[#ef781e] w-[25%]" />
+      </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="w-full flex-1 flex flex-col gap-8 px-4 pb-8 pt-4">
+      <!-- Bouton Retour -->
+      <div class="flex items-center gap-2 cursor-pointer mt-2" @click="goBack">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="text-base text-black font-roboto">Retour</span>
+      </div>
+
+      <!-- Qui êtes-vous ? -->
+      <div class="flex flex-col gap-8">
+        <!-- Titre et sous-titre -->
+        <div class="flex flex-col gap-2 text-center">
+          <h1 class="text-[30px] font-semibold text-black leading-[45px] font-asap">
+            Qui êtes-vous ?
+          </h1>
+          <p class="text-base text-[#4a5565] leading-6 font-roboto">
+            Choisissez le type de profil qui vous correspond
+          </p>
+        </div>
+
+        <!-- Options de profil -->
+        <div class="flex flex-col gap-4">
+          <ProfileTypeCard
+            :model-value="selectedProfileType === 'particulier'"
+            icon="i-sportly-user-profile"
+            title="Particulier"
+            description="Je recherche des activités sportives près de chez moi"
+            @update:model-value="selectedProfileType = 'particulier'"
+          />
+
+          <ProfileTypeCard
+            :model-value="selectedProfileType === 'club'"
+            icon="i-sportly-building"
+            title="Club / Salle"
+            description="Je propose des activités et gère mes réservations"
+            @update:model-value="selectedProfileType = 'club'"
+          />
+        </div>
+
+        <!-- Bouton Continuer -->
+        <UButton
+          v-if="selectedProfileType"
+          block
+          class="!bg-[#ef781e] hover:!bg-[#e05f16] !text-white !font-semibold !font-montserrat !text-base !rounded-[50px] !py-3 !mt-4"
+          @click="goNext"
+        >
+          Continuer
+        </UButton>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.font-asap {
+  font-family: 'Asap', sans-serif;
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+</style>
