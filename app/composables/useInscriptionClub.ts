@@ -1,8 +1,8 @@
 export interface InscriptionClubData {
-  // Step 1: Sports
+  // Step 2: Sports (step 1 = profile type selection on /inscription)
   sports: string[]
 
-  // Step 2: Infos club
+  // Step 3: Infos club
   clubName: string
   website: string
   description: string
@@ -10,7 +10,7 @@ export interface InscriptionClubData {
   city: string
   address: string
 
-  // Step 3: Infos personnelles
+  // Step 4: Infos personnelles
   firstName: string
   lastName: string
   email: string
@@ -27,15 +27,15 @@ export interface InscriptionClubState {
   error: string | null
 }
 
-export const TOTAL_STEPS_CLUB = 3
+export const TOTAL_STEPS_CLUB = 4
 
 export const useInscriptionClub = () => {
   const route = useRoute()
   const router = useRouter()
 
   const state = useState<InscriptionClubState>('inscription-club-state', () => ({
-    currentStep: 1,
-    maxStepReached: 1,
+    currentStep: 2,
+    maxStepReached: 2,
     data: {
       sports: [],
       clubName: '',
@@ -62,14 +62,9 @@ export const useInscriptionClub = () => {
     },
     set: (value: number) => {
       router.push({
-        path: '/inscription/club',
-        query: { step: String(value) }
+        query: { ...route.query, step: String(value) }
       })
     }
-  })
-
-  const progress = computed(() => {
-    return (currentStep.value / TOTAL_STEPS_CLUB) * 100
   })
 
   const goToStep = (step: number) => {
@@ -104,8 +99,8 @@ export const useInscriptionClub = () => {
 
   const resetState = () => {
     state.value = {
-      currentStep: 1,
-      maxStepReached: 1,
+      currentStep: 2,
+      maxStepReached: 2,
       data: {
         sports: [],
         clubName: '',
@@ -129,7 +124,6 @@ export const useInscriptionClub = () => {
   return {
     state,
     currentStep,
-    progress,
     goToStep,
     nextStep,
     prevStep,

@@ -32,11 +32,11 @@ function skipForNow() {
         class="w-[120px] h-auto object-cover"
         loading="lazy"
         alt="Logo Sportly"
-        src="/Nouveau-logo-sportly-1Logo-1@2x.png"
+        src="/long-logo.png"
       >
       <!-- Barre de progression (100%) -->
       <div class="absolute bottom-0 left-0 w-full h-[2px] bg-gray-200">
-        <div class="h-full bg-[#ef781e] w-full" />
+        <div class="h-full bg-tango-500 w-full" />
       </div>
     </div>
 
@@ -98,7 +98,7 @@ function skipForNow() {
         <div class="flex flex-col gap-3 w-full max-w-[352px] mt-8">
           <UButton
             block
-            class="!bg-[#ef781e] hover:!bg-[#e05f16] !text-white !font-semibold !font-montserrat !text-base !rounded-[50px] !py-3"
+            class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3!"
             @click="addRooms"
           >
             Ajouter des salles
@@ -106,7 +106,7 @@ function skipForNow() {
 
           <UButton
             block
-            class="!bg-[#ef781e] hover:!bg-[#e05f16] !text-white !font-semibold !font-montserrat !text-base !rounded-[50px] !py-3"
+            class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3!"
             @click="createEvent"
           >
             Créer un événement
