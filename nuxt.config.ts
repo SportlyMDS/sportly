@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui'
+    '@nuxt/ui',
+    '@nuxtjs/leaflet'
   ],
 
   // Configuration des imports automatiques
@@ -16,11 +17,16 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  ui: {
+    colorMode: false
+  },
+
   // Configuration des variables d'environnement
   runtimeConfig: {
     // Variables côté serveur uniquement
     betterAuthSecret: process.env.BETTER_AUTH_SECRET,
     databaseUrl: process.env.DATABASE_URL,
+    resendApiKey: process.env.RESEND_API_KEY,
 
     // Variables publiques (exposées côté client)
     public: {

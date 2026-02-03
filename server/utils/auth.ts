@@ -77,6 +77,4 @@ function getBaseURL() {
   return baseURL
 }
 
-_auth = serverAuth()
-
-export const auth = _auth!
+export const auth = serverAuth
