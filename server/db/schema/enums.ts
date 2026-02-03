@@ -8,3 +8,7 @@ export const sportLevelEnum = pgEnum('sport_level', ['DEBUTANT', 'INTERMEDIAIRE'
 export const targetAudienceEnum = pgEnum('target_audience', ['ENFANTS', 'ADOS', 'ADULTES', 'SENIORS', 'TOUS'])
 export const facilityTypeEnum = pgEnum('facility_type', ['HANDICAP_FRIENDLY', 'VESTIAIRES', 'TOILETTES'])
 export const weekdayEnum = pgEnum('weekday', ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'])
+
+// Enums pour l'inscription club
+export const clubRegistrationStatusEnum = pgEnum('club_registration_status', ['DRAFT', 'PENDING', 'VERIFIED', 'COMPLETED'])
+export const clubOfferTypeEnum = pgEnum('club_offer_type', ['ESSENTIEL', 'VISIBILITE'])

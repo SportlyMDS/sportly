@@ -1,5 +1,6 @@
 import { pgTable, uuid, varchar, text, numeric, integer, boolean, date, timestamp, doublePrecision, char } from 'drizzle-orm/pg-core'
 import { accounts } from './auth'
+import { clubRegistrationStatusEnum, clubOfferTypeEnum } from './enums'
 
 // Table des utilisateurs
 export const users = pgTable('users', {
@@ -21,7 +22,15 @@ export const clubs = pgTable('clubs', {
   websiteUrl: text('website_url'),
   phone: varchar('phone', { length: 32 }),
   email: varchar('email', { length: 120 }),
-  logoMediaId: uuid('logo_media_id') // Référence vers media_files
+  logoMediaId: uuid('logo_media_id'), // Référence vers media_files
+
+  // Champs pour l'inscription club
+  registrationStatus: clubRegistrationStatusEnum('registration_status').notNull().default('DRAFT'),
+  offerType: clubOfferTypeEnum('offer_type').default('ESSENTIEL'),
+  sports: text('sports').array(), // Sports proposés par le club
+  adminFirstName: varchar('admin_first_name', { length: 80 }),
+  adminLastName: varchar('admin_last_name', { length: 80 }),
+  verificationId: text('verification_id') // Référence vers la vérification email
 })
 
 // Table des adresses

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { z } from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
 import type { InscriptionClubData } from '~/composables/useInscriptionClub'
 
 const props = defineProps<{
@@ -10,23 +12,51 @@ const emit = defineEmits<{
   next: []
 }>()
 
-const isFormValid = computed(() => {
-  return props.data.clubName.trim() !== ''
-    && props.data.description.trim() !== ''
-    && props.data.postalCode.trim() !== ''
-    && props.data.city.trim() !== ''
-    && props.data.address.trim() !== ''
+const schema = z.object({
+  clubName: z.string().min(2, 'Le nom du club doit contenir au moins 2 caractères'),
+  website: z.string().url('URL invalide').optional().or(z.literal('')),
+  description: z.string().min(10, 'La description doit contenir au moins 10 caractères'),
+  postalCode: z.string().regex(/^\d{5}$/, 'Code postal invalide (5 chiffres)'),
+  city: z.string().min(2, 'La ville doit contenir au moins 2 caractères'),
+  address: z.string().min(5, 'L\'adresse doit contenir au moins 5 caractères')
 })
 
-function handleNext() {
-  if (isFormValid.value) {
-    emit('next')
-  }
+type Schema = z.output<typeof schema>
+
+const state = reactive<Schema>({
+  clubName: props.data.clubName,
+  website: props.data.website,
+  description: props.data.description,
+  postalCode: props.data.postalCode,
+  city: props.data.city,
+  address: props.data.address
+})
+
+watch(() => props.data, (newData) => {
+  state.clubName = newData.clubName
+  state.website = newData.website
+  state.description = newData.description
+  state.postalCode = newData.postalCode
+  state.city = newData.city
+  state.address = newData.address
+}, { deep: true })
+
+watch(state, (newState) => {
+  emit('update', 'clubName', newState.clubName)
+  emit('update', 'website', newState.website || '')
+  emit('update', 'description', newState.description)
+  emit('update', 'postalCode', newState.postalCode)
+  emit('update', 'city', newState.city)
+  emit('update', 'address', newState.address)
+}, { deep: true })
+
+function onSubmit(_event: FormSubmitEvent<Schema>) {
+  emit('next')
 }
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
+  <UForm :schema="schema" :state="state" class="flex flex-col gap-8" @submit="onSubmit">
     <!-- Titre et sous-titre -->
     <div class="flex flex-col gap-2">
       <h1 class="text-[30px] font-semibold text-[#1c1c1c] leading-[45px] tracking-tight font-asap">
@@ -40,40 +70,36 @@ function handleNext() {
     <!-- Formulaire -->
     <div class="flex flex-col gap-6">
       <!-- Nom du club -->
-      <div class="flex flex-col gap-2">
-        <label class="text-base text-[#1c1c1c] leading-6 font-roboto">Nom du club *</label>
-        <input
-          :value="data.clubName"
-          type="text"
+      <UFormField label="Nom du club" name="clubName" required>
+        <UInput
+          v-model="state.clubName"
           placeholder="Nom du club"
-          class="w-full bg-[#f7f7f7] border-2 border-[#e5e7eb] rounded-lg h-12 px-3 text-sm text-[#1c1c1c] placeholder-[#545454] font-roboto focus:outline-none focus:border-[#ef781e]"
-          @input="emit('update', 'clubName', ($event.target as HTMLInputElement).value)"
-        >
-      </div>
+          class="w-full"
+          size="lg"
+        />
+      </UFormField>
 
       <!-- Site web -->
-      <div class="flex flex-col gap-2">
-        <label class="text-base text-[#1c1c1c] leading-6 font-roboto">Site web</label>
-        <input
-          :value="data.website"
+      <UFormField label="Site web" name="website" hint="Optionnel">
+        <UInput
+          v-model="state.website"
           type="url"
-          placeholder="Site web"
-          class="w-full bg-[#f7f7f7] border-2 border-[#e5e7eb] rounded-lg h-12 px-3 text-sm text-[#1c1c1c] placeholder-[#545454] font-roboto focus:outline-none focus:border-[#ef781e]"
-          @input="emit('update', 'website', ($event.target as HTMLInputElement).value)"
-        >
-      </div>
+          placeholder="https://monclub.fr"
+          class="w-full"
+          size="lg"
+        />
+      </UFormField>
 
       <!-- Description du club -->
-      <div class="flex flex-col gap-2">
-        <label class="text-base text-[#1c1c1c] leading-6 font-roboto">Description du club *</label>
-        <textarea
-          :value="data.description"
+      <UFormField label="Description du club" name="description" required>
+        <UTextarea
+          v-model="state.description"
           placeholder="(Historique, valeurs, sports proposés)"
-          rows="4"
-          class="w-full bg-[#f7f7f7] border-2 border-[#e5e7eb] rounded-lg px-3 py-2 text-sm text-[#1c1c1c] placeholder-[#545454] font-roboto focus:outline-none focus:border-[#ef781e] resize-none"
-          @input="emit('update', 'description', ($event.target as HTMLTextAreaElement).value)"
+          :rows="4"
+          class="w-full"
+          size="lg"
         />
-      </div>
+      </UFormField>
 
       <!-- Section Adresse -->
       <div class="flex flex-col gap-4">
@@ -83,52 +109,46 @@ function handleNext() {
 
         <!-- Code postal et Ville -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="flex flex-col gap-2">
-            <label class="text-base text-[#1c1c1c] leading-6 font-roboto">Code postal *</label>
-            <input
-              :value="data.postalCode"
-              type="text"
+          <UFormField label="Code postal" name="postalCode" required>
+            <UInput
+              v-model="state.postalCode"
               placeholder="59000"
-              class="w-full bg-[#f7f7f7] border-2 border-[#e5e7eb] rounded-lg h-12 px-3 text-sm text-[#1c1c1c] placeholder-[#545454] font-roboto focus:outline-none focus:border-[#ef781e]"
-              @input="emit('update', 'postalCode', ($event.target as HTMLInputElement).value)"
-            >
-          </div>
-          <div class="flex flex-col gap-2">
-            <label class="text-base text-[#1c1c1c] leading-6 font-roboto">Ville *</label>
-            <input
-              :value="data.city"
-              type="text"
+              class="w-full"
+              size="lg"
+            />
+          </UFormField>
+
+          <UFormField label="Ville" name="city" required>
+            <UInput
+              v-model="state.city"
               placeholder="Lille"
-              class="w-full bg-[#f7f7f7] border-2 border-[#e5e7eb] rounded-lg h-12 px-3 text-sm text-[#1c1c1c] placeholder-[#545454] font-roboto focus:outline-none focus:border-[#ef781e]"
-              @input="emit('update', 'city', ($event.target as HTMLInputElement).value)"
-            >
-          </div>
+              class="w-full"
+              size="lg"
+            />
+          </UFormField>
         </div>
 
         <!-- Adresse -->
-        <div class="flex flex-col gap-2">
-          <label class="text-base text-[#1c1c1c] leading-6 font-roboto">Adresse *</label>
-          <input
-            :value="data.address"
-            type="text"
+        <UFormField label="Adresse" name="address" required>
+          <UInput
+            v-model="state.address"
             placeholder="37 Rue Pierre Mauroy"
-            class="w-full bg-[#f7f7f7] border-2 border-[#e5e7eb] rounded-lg h-12 px-3 text-sm text-[#1c1c1c] placeholder-[#545454] font-roboto focus:outline-none focus:border-[#ef781e]"
-            @input="emit('update', 'address', ($event.target as HTMLInputElement).value)"
-          >
-        </div>
+            class="w-full"
+            size="lg"
+          />
+        </UFormField>
       </div>
     </div>
 
     <!-- Bouton Continuer -->
     <UButton
+      type="submit"
       block
-      :disabled="!isFormValid"
-      class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3! disabled:opacity-50! disabled:cursor-not-allowed!"
-      @click="handleNext"
+      class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3!"
     >
       Continuer
     </UButton>
-  </div>
+  </UForm>
 </template>
 
 <style scoped>
