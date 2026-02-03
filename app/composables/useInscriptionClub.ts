@@ -25,6 +25,11 @@ export interface InscriptionClubState {
   data: InscriptionClubData
   isLoading: boolean
   error: string | null
+  // Email verification
+  verificationId: string | null
+  emailVerified: boolean
+  // Club registration
+  clubId: string | null
 }
 
 export const TOTAL_STEPS_CLUB = 4
@@ -52,7 +57,10 @@ export const useInscriptionClub = () => {
       confirmPassword: ''
     },
     isLoading: false,
-    error: null
+    error: null,
+    verificationId: null,
+    emailVerified: false,
+    clubId: null
   }))
 
   const currentStep = computed({
@@ -117,7 +125,10 @@ export const useInscriptionClub = () => {
         confirmPassword: ''
       },
       isLoading: false,
-      error: null
+      error: null,
+      verificationId: null,
+      emailVerified: false,
+      clubId: null
     }
   }
 
