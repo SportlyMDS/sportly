@@ -1,6 +1,7 @@
 // Export de tous les schémas Drizzle pour Sportly
 export * from './enums'
 export * from './auth'
+export * from './email-verification'
 export * from './users'
 export * from './sports'
 export * from './events'

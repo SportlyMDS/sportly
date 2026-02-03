@@ -4,17 +4,28 @@
 @theme {
   --font-sans: 'Geist', sans-serif;
   --font-mono: 'Jetbrains Mono', monospace;
+
+  /* Palette Tango */
+  --color-tango-50: #fef7ee;
+  --color-tango-100: #fdeed7;
+  --color-tango-200: #fad9ae;
+  --color-tango-300: #f7bd7a;
+  --color-tango-400: #f39744;
+  --color-tango-500: #ef781e;
+  --color-tango-600: #e05f16;
+  --color-tango-700: #ba4714;
+  --color-tango-800: #943a18;
+  --color-tango-900: #773117;
+  --color-tango-950: #40160a;
 }
 
 :root {
-  --ui-primary: black;
+  --ui-radius: 0.25rem;
+}
 
-  --ui-radius: 0
-
-  ::selection {
-    color: #282a30;
-    background-color: #c8c8c8;
-  }
+::selection {
+    color: var(--color-tango-50);
+    background-color: var(--color-tango-500);
 }
 
 .dark {
@@ -22,19 +33,7 @@
   --ui-bg: #0d0d0d;
 
   ::selection {
-    color: #ffffff;
-    background-color: #474747;
+    color: var(--color-tango-50);
+    background-color: var(--color-tango-500);
   }
-}
-
-.bg-stripes {
-  @apply w-full [background-size:4px_4px];
-  @apply dark:[background-image:linear-gradient(-45deg,var(--color-neutral-700)_12.50%,transparent_12.50%,transparent_50%,var(--color-neutral-700)_50%,var(--color-neutral-700)_62.50%,transparent_62.50%,transparent_100%)];
-  @apply not-dark:[background-image:linear-gradient(-45deg,var(--color-neutral-200)_12.50%,transparent_12.50%,transparent_50%,var(--color-neutral-200)_50%,var(--color-neutral-200)_62.50%,transparent_62.50%,transparent_100%)];
-}
-
-.cross {
-  @apply before:absolute after:absolute;
-  @apply before:top-[-4px] before:bg-inverted before:content-[''] before:w-[1px] before:h-[9px];
-  @apply after:left-[-4px] after:bg-inverted after:content-[''] after:w-[9px] after:h-[1px];
 }
