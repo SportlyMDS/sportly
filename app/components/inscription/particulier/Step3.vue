@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { InscriptionParticulierData } from '~/composables/useInscription'
+import type { InscriptionParticulierData } from '~/composables/useInscriptionParticulier'
 
 const props = defineProps<{
   data: InscriptionParticulierData

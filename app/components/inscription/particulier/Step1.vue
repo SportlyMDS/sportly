@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { z } from 'zod'
-import type { InscriptionParticulierData } from '~/composables/useInscription'
+import type { InscriptionParticulierData } from '~/composables/useInscriptionParticulier'
 
 const props = defineProps<{
   data: InscriptionParticulierData
