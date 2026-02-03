@@ -61,7 +61,7 @@ function goNext() {
       >
       <!-- Barre de progression (100%) -->
       <div class="absolute bottom-0 left-0 w-full h-[2px] bg-gray-200">
-        <div class="h-full bg-[#ef781e] w-full" />
+        <div class="h-full bg-tango-500 w-full" />
       </div>
     </div>
 
@@ -124,7 +124,7 @@ function goNext() {
           >
             <template #icon>
               <svg
-                class="w-8 h-8 text-[#e05f16]"
+                class="w-8 h-8 text-tango-600"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +154,7 @@ function goNext() {
           >
             <template #icon>
               <svg
-                class="w-8 h-8 text-[#e05f16]"
+                class="w-8 h-8 text-tango-600"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -187,7 +187,7 @@ function goNext() {
       <div class="pt-4 border-t border-[#d6d6d6]">
         <UButton
           block
-          class="!bg-[#ef781e] hover:!bg-[#e05f16] !text-white !font-semibold !font-montserrat !text-base !rounded-[50px] !py-3"
+          class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3!"
           @click="goNext"
         >
           Continuer

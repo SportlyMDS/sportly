@@ -8,7 +8,7 @@ definePageMeta({
 const {
   state,
   currentStep,
-  progress,
+  totalSteps,
   prevStep,
   nextStep,
   updateData
@@ -24,6 +24,14 @@ function handleSportsUpdate(sports: string[]) {
 // Handle data updates from step components
 function handleUpdate(key: keyof InscriptionClubData, value: string) {
   updateData(key, value as InscriptionClubData[typeof key])
+}
+
+function handleBack() {
+  if (currentStep.value === 2) {
+    navigateTo('/inscription')
+  } else {
+    prevStep()
+  }
 }
 
 // Handle final submission
@@ -56,54 +64,58 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="w-[393px] min-h-screen bg-white max-w-full overflow-hidden flex flex-col items-center mx-auto">
-    <!-- Header avec logo -->
-    <div class="w-full bg-white flex items-center justify-center p-4 relative">
-      <img
-        class="w-[120px] h-auto object-cover"
-        loading="lazy"
-        alt="Logo Sportly"
-        src="/Nouveau-logo-sportly-1Logo-1@2x.png"
-      >
-      <!-- Barre de progression dynamique -->
-      <div class="absolute bottom-0 left-0 w-full h-[2px] bg-gray-200">
-        <div class="h-full bg-[#ef781e] transition-all duration-300" :style="{ width: `${progress}%` }" />
-      </div>
-    </div>
-
-    <!-- Contenu principal -->
-    <div class="w-full flex-1 flex flex-col gap-8 px-4 pb-8 pt-4">
-      <!-- Bouton Retour -->
-      <div class="flex items-center gap-2 cursor-pointer" @click="prevStep">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15 18L9 12L15 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <span class="text-base text-black font-roboto">Retour</span>
+  <div class="flex flex-col h-dvh bg-white">
+    <header class="shrink-0">
+      <div class="flex justify-center px-4 py-4">
+        <img src="/long-logo.png" alt="Sportly" class="h-7">
       </div>
 
+      <UProgress
+        :model-value="currentStep"
+        :max="totalSteps"
+        size="2xs"
+        :ui="{
+          base: 'bg-white',
+          indicator: 'bg-tango-500'
+        }"
+      />
+
+      <div class="px-4 py-4">
+        <UButton
+          class="text-gray-500"
+          variant="ghost"
+          icon="i-heroicons-arrow-left"
+          @click="handleBack"
+        >
+          Retour
+        </UButton>
+      </div>
+    </header>
+
+    <main class="flex-1 flex flex-col min-h-0 px-4 pb-8">
       <!-- Contenu dynamique selon l'étape -->
       <Transition name="slide" mode="out-in">
         <InscriptionClubStep1Sports
-          v-if="currentStep === 1"
+          v-if="currentStep === 2"
           :selected-sports="state.data.sports"
           @update:selected-sports="handleSportsUpdate"
           @next="nextStep"
         />
         <InscriptionClubStep2ClubInfo
-          v-else-if="currentStep === 2"
+          v-else-if="currentStep === 3"
           :data="state.data"
           @update="handleUpdate"
           @next="nextStep"
         />
         <InscriptionClubStep3PersonalInfo
-          v-else-if="currentStep === 3"
+          v-else-if="currentStep === 4"
           :data="state.data"
           :is-loading="state.isLoading"
           @update="handleUpdate"
           @submit="handleSubmit"
         />
       </Transition>
-    </div>
+    </main>
   </div>
 </template>
 
