@@ -20,7 +20,7 @@ function isActive(path: string) {
 <template>
   <div class="w-[393px] min-h-screen bg-white max-w-full mx-auto flex flex-col">
     <!-- Main content -->
-    <main class="flex-1 pb-20">
+    <main class="flex-1 px-4 pt-6 pb-20">
       <slot />
     </main>
 
