@@ -15,7 +15,7 @@ const allClubs = reactive([
   {
     id: 1,
     name: 'Le hook Lille',
-    image: '/images/clubs/hook.jpg',
+    image: '/le_hook.png',
     sport: 'Musculation',
     sportEmoji: '💪',
     clubEmoji: '🏋️',
@@ -28,7 +28,7 @@ const allClubs = reactive([
   {
     id: 2,
     name: 'Sport Club Lille',
-    image: '/images/clubs/sport-club.jpg',
+    image: '/foot.png',
     sport: 'Football',
     sportEmoji: '⚽',
     clubEmoji: '⚽',
@@ -41,7 +41,7 @@ const allClubs = reactive([
   {
     id: 3,
     name: 'Aqua Center',
-    image: '/images/clubs/aqua.jpg',
+    image: '/aqualille.jpg',
     sport: 'Natation',
     sportEmoji: '🏊',
     clubEmoji: '🏊',
@@ -54,7 +54,7 @@ const allClubs = reactive([
   {
     id: 4,
     name: 'Basket Lille Club',
-    image: '/images/clubs/basket.jpg',
+    image: '/lille_basket.jpeg',
     sport: 'Basketball',
     sportEmoji: '🏀',
     clubEmoji: '🏀',
@@ -125,7 +125,7 @@ const news = [
     clubName: 'Olympique Lille Académie',
     title: 'Notre premier tournois est terminé !',
     excerpt: 'Merci à tous les participants pour cette superbe édition. Rendez-vous l\'année prochaine pour de nouveaux défis sportifs !',
-    image: '/images/news/tournoi.jpg'
+    image: '/tournoi.jpg'
   }
 ]
 
