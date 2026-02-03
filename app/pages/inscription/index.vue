@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'minimal'
+  layout: false
 })
 
 // État du formulaire
@@ -16,9 +16,9 @@ function goNext() {
 
   // Rediriger vers la page d'inscription correspondante
   if (selectedProfileType.value === 'particulier') {
-    navigateTo('/auth/signup?type=particulier')
+    navigateTo('/inscription/particulier')
   } else {
-    navigateTo('/auth/signup?type=club')
+    navigateTo('/inscription/club')
   }
 }
 </script>
@@ -84,8 +84,7 @@ function goNext() {
         <UButton
           v-if="selectedProfileType"
           block
-          color="primary"
-          class="!rounded-full !py-3 !mt-4 !font-semibold !font-montserrat !text-base"
+          class="!bg-[#ef781e] hover:!bg-[#e05f16] !text-white !font-semibold !font-montserrat !text-base !rounded-[50px] !py-3 !mt-4"
           @click="goNext"
         >
           Continuer
