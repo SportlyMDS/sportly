@@ -115,9 +115,9 @@ function toggleFavorite(club: typeof allClubs[0]) {
           placeholder="Rechercher des clubs, activités"
           class="search-input w-full bg-white border border-[#d6d6d6] h-12 pl-4 pr-12 text-base text-[#1c1c1c] placeholder-[rgba(28,28,28,0.5)] font-roboto focus:outline-none focus:border-[#ef781e]"
         >
-        <button class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#ef781e] rounded-md flex items-center justify-center">
+        <button class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center">
           <svg
-            class="text-white"
+            class="text-[#ef781e]"
             width="18"
             height="18"
             viewBox="0 0 24 24"
@@ -145,10 +145,10 @@ function toggleFavorite(club: typeof allClubs[0]) {
       </div>
 
       <!-- Filter buttons -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide">
         <!-- Favorites toggle -->
         <button
-          class="h-10 w-12 border rounded-full flex items-center justify-center transition-colors"
+          class="h-10 w-12 shrink-0 border rounded-full flex items-center justify-center transition-colors"
           :class="showFavoritesOnly ? 'border-[#ef781e] bg-[rgba(239,120,30,0.1)]' : 'border-[#d6d6d6] bg-white'"
           @click="showFavoritesOnly = !showFavoritesOnly"
         >
@@ -171,9 +171,9 @@ function toggleFavorite(club: typeof allClubs[0]) {
         </button>
 
         <!-- Distance dropdown -->
-        <div class="relative">
+        <div class="relative shrink-0">
           <button
-            class="h-10 px-4 border border-[#d6d6d6] bg-white rounded-full flex items-center gap-2 text-sm font-roboto text-[#1c1c1c]"
+            class="h-10 px-4 border border-[#d6d6d6] bg-white rounded-full flex items-center gap-2 text-sm font-roboto text-[#1c1c1c] whitespace-nowrap"
             @click="showDistanceDropdown = !showDistanceDropdown"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
@@ -210,7 +210,7 @@ function toggleFavorite(club: typeof allClubs[0]) {
         </div>
 
         <!-- Categories dropdown -->
-        <div class="relative flex-1">
+        <div class="relative shrink-0">
           <button
             class="h-10 px-4 w-full border border-[#d6d6d6] bg-white rounded-full flex items-center justify-between gap-2 text-sm font-roboto text-[#1c1c1c]"
             @click="showCategoryDropdown = !showCategoryDropdown"
@@ -416,5 +416,14 @@ function toggleFavorite(club: typeof allClubs[0]) {
 
 .club-card {
   border-radius: 12px !important;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 </style>
