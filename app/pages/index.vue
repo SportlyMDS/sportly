@@ -4,8 +4,8 @@ definePageMeta({
   layout: 'auth'
 })
 
-const heroImage = 'https://www.figma.com/api/mcp/asset/487fd4ec-a6bc-40c6-ba97-fd4da9f402ca'
-const decorativeShape = 'https://www.figma.com/api/mcp/asset/c9abe182-a7aa-4c6d-a3d6-f70b5068ff20'
+const heroImage = '/sportif.png'
+const decorativeShape = '/decorativeShape.png'
 </script>
 
 <template>
@@ -23,19 +23,19 @@ const decorativeShape = 'https://www.figma.com/api/mcp/asset/c9abe182-a7aa-4c6d-
         <img
           :src="decorativeShape"
           alt=""
-          class="absolute top-0 left-0 w-full h-full object-contain object-top"
+          class="absolute top-0 left-0 w-full h-full object-contain object-top opacity-40"
         >
         <!-- Soccer player image -->
         <img
           :src="heroImage"
           alt="Sportif en action"
-          class="absolute -top-[30px] -left-[100px] w-[420px] h-auto object-contain"
+          class="absolute -top-[52px] -left-[163px] w-[478px] h-[449px] object-cover"
         >
       </div>
 
       <!-- Text Content -->
       <div class="relative z-10 w-full mt-[380px]">
-        <h1 class="font-bold text-4xl leading-[44px] tracking-[-0.72px] text-[#212121]" style="font-family: 'Asap', sans-serif;">
+        <h1 class="font-bold italic text-4xl leading-[44px] tracking-[-0.72px] text-[#212121]" style="font-family: 'Asap', sans-serif;">
           BOUGEZ PLUS, CHERCHEZ MOINS
         </h1>
         <p class="text-base leading-6 text-[#212121]">
