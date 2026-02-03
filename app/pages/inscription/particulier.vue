@@ -10,7 +10,7 @@
       <!-- Progress bar pleine largeur, très fine -->
       <UProgress
         :model-value="currentStep"
-        :max="3"
+        :max="4"
         size="2xs"
         :ui="{
           base: 'bg-white',
@@ -35,14 +35,14 @@
     <main class="flex-1 flex flex-col min-h-0 px-4 pb-8">
       <Transition name="slide" mode="out-in">
         <InscriptionParticulierStep1
-          v-if="currentStep === 1"
+          v-if="currentStep === 2"
           :data="state.data"
           :is-loading="state.isLoading"
           @update="handleUpdate"
           @next="handleStep1Submit"
         />
         <InscriptionParticulierStep2
-          v-else-if="currentStep === 2"
+          v-else-if="currentStep === 3"
           :data="state.data"
           :is-loading="state.isLoading"
           @update="handleUpdate"
@@ -50,7 +50,7 @@
           @resend="handleResendCode"
         />
         <InscriptionParticulierStep3
-          v-else-if="currentStep === 3"
+          v-else-if="currentStep === 4"
           :data="state.data"
           :is-loading="state.isLoading"
           @update="handleUpdate"
@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import type { InscriptionParticulierData } from '~/composables/useInscription'
+import type { InscriptionParticulierData } from '~/composables/useInscriptionParticulier'
 
 definePageMeta({
   middleware: 'guest',
@@ -82,10 +82,10 @@ const {
   prevStep,
   nextStep,
   updateData
-} = useInscription()
+} = useInscriptionParticulier()
 
 const handleBack = () => {
-  if (currentStep.value === 1) {
+  if (currentStep.value === 2) {
     router.push('/inscription')
   } else {
     prevStep()

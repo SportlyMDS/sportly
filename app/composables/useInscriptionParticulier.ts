@@ -68,19 +68,19 @@ export const inscriptionSchemas = {
 /**
  * Nombre total d'étapes pour l'inscription particulier
  */
-export const TOTAL_STEPS_PARTICULIER = 3
+export const TOTAL_STEPS_PARTICULIER = 4
 
 /**
  * Composable pour gérer l'état de l'inscription
  */
-export const useInscription = () => {
+export const useInscriptionParticulier = () => {
   const route = useRoute()
   const router = useRouter()
 
   // État global de l'inscription (persisté pendant la session)
   const state = useState<InscriptionState>('inscription-state', () => ({
-    currentStep: 1,
-    maxStepReached: 1,
+    currentStep: 2,
+    maxStepReached: 2,
     data: {
       firstName: '',
       lastName: '',
@@ -146,8 +146,8 @@ export const useInscription = () => {
   // Réinitialiser l'état
   const resetState = () => {
     state.value = {
-      currentStep: 1,
-      maxStepReached: 1,
+      currentStep: 2,
+      maxStepReached: 2,
       data: {
         firstName: '',
         lastName: '',

@@ -195,7 +195,7 @@ function handleSubmit() {
       block
       :disabled="!isFormValid || isLoading"
       :loading="isLoading"
-      class="!bg-[#ef781e] hover:!bg-[#e05f16] !text-white !font-semibold !font-montserrat !text-base !rounded-[50px] !py-3 disabled:!opacity-50 disabled:!cursor-not-allowed"
+      class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3! disabled:opacity-50! disabled:cursor-not-allowed!"
       @click="handleSubmit"
     >
       Continuer
