@@ -39,19 +39,15 @@ export const useAuth = (): UseAuthReturn => {
     }
   })
   const options: RuntimeAuthConfig = defu(useRuntimeConfig().public.auth as Partial<RuntimeAuthConfig>, {
-    redirectUserTo: '/app/user',
-    redirectClubTo: '/app/club',
+    redirectUserTo: '/dashboard/user',
+    redirectClubTo: '/dashboard/club',
     redirectDefaultTo: '/'
   })
 
   const session = useState<InferSessionFromClient<ClientOptions> | null>('auth.session', () => null)
   const user = useState<InferUserFromClient<ClientOptions> | null>('auth.user', () => null)
-  const sessionFetching = import.meta.server ? ref(false) : useState<boolean>('auth.session-fetching', () => false)
 
   const fetchSession = async () => {
-    if (sessionFetching.value) return
-    sessionFetching.value = true
-
     try {
       const { data } = await client.getSession({
         fetchOptions: {
@@ -66,16 +62,7 @@ export const useAuth = (): UseAuthReturn => {
       session.value = null
       user.value = null
       return null
-    } finally {
-      sessionFetching.value = false
     }
-  }
-
-  if (import.meta.client) {
-    client.$store.listen('$sessionSignal', async (signal) => {
-      if (!signal) return
-      await fetchSession()
-    })
   }
 
   return {
