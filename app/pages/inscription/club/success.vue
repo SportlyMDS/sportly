@@ -10,17 +10,17 @@ function goBack() {
 function addRooms() {
   // TODO: Navigate to add rooms page
   console.log('Add rooms')
-  navigateTo('/app/club/salles/new')
+  navigateTo('/dashboard/club/salles/new')
 }
 
 function createEvent() {
   // TODO: Navigate to create event page
   console.log('Create event')
-  navigateTo('/app/club/evenements/new')
+  navigateTo('/dashboard/club/evenements/new')
 }
 
 function skipForNow() {
-  navigateTo('/app/club')
+  navigateTo('/dashboard/club')
 }
 </script>
 
@@ -105,7 +105,9 @@ function skipForNow() {
           </UButton>
 
           <UButton
+            to="/dashboard/club"
             block
+            size="lg"
             class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3!"
             @click="createEvent"
           >

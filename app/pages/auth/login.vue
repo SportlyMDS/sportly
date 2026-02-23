@@ -166,13 +166,27 @@ const handleLogin = async (data: any) => {
   isLoading.value = true
 
   try {
-    await signIn.email(data.email, data.password)
+    const { fetchSession } = useAuth()
+    const { error } = await signIn.email({
+      email: data.email,
+      password: data.password,
+      fetchOptions: {
+        onSuccess: async () => {
+          await fetchSession()
+        }
+      }
+    })
+
+    if (error) throw error
 
     toast.add({
       title: 'Connexion réussie',
       description: 'Vous êtes maintenant connecté.',
       color: 'success'
     })
+
+    await fetchSession()
+    window.location.href = '/dashboard/user'
   } catch {
     toast.add({
       title: 'Erreur de connexion',
@@ -185,10 +199,10 @@ const handleLogin = async (data: any) => {
 }
 
 const handleGoogleLogin = () => {
-  signIn.social({ provider: 'google', callbackURL: '/app/user' })
+  signIn.social({ provider: 'google', callbackURL: '/dashboard/user' })
 }
 
 const handleFacebookLogin = () => {
-  signIn.social({ provider: 'facebook', callbackURL: '/app/user' })
+  signIn.social({ provider: 'facebook', callbackURL: '/dashboard/user' })
 }
 </script>
