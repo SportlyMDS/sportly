@@ -216,7 +216,7 @@ const filteredEvents = computed(() => {
           class="shrink-0 px-4 py-2 rounded-full text-base font-roboto transition-colors"
           :class="[
             activeFilter === filter
-              ? 'bg-[#ef781e] text-[#313131]'
+              ? 'bg-tango-500 text-[#313131]'
               : 'bg-white border border-[#d6d6d6] text-[#c45400]'
           ]"
           @click="activeFilter = filter"
@@ -290,7 +290,7 @@ const filteredEvents = computed(() => {
             <span class="text-xs font-medium text-[#c45400] bg-[#fef3c7] px-2 py-1 rounded-md font-roboto">Événement</span>
             <button
               class="transition-colors"
-              :class="event.isFavorite ? 'text-[#ef781e]' : 'text-[#d6d6d6] hover:text-[#ef781e]'"
+              :class="event.isFavorite ? 'text-tango-500' : 'text-[#d6d6d6] hover:text-[#ef781e]'"
               @click.stop="event.isFavorite = !event.isFavorite"
             >
               <svg

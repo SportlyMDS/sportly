@@ -15,7 +15,7 @@ const handleQuickLogin = async () => {
     const { fetchSession } = useAuth()
     const { error } = await signIn.email({
       email: 'louis.floquet+3@proton.me',
-      password: '', // à mettre le mot de passe /!\
+      password: '***REMOVED***', // à mettre le mot de passe /!\
       fetchOptions: {
         onSuccess: async () => {
           await fetchSession()

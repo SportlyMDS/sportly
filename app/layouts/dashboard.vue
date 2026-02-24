@@ -18,21 +18,21 @@ function isActive(path: string) {
 </script>
 
 <template>
-  <div class="w-[393px] min-h-screen bg-white max-w-full mx-auto flex flex-col">
+  <div class="min-h-screen bg-white flex flex-col">
     <!-- Main content -->
-    <main class="flex-1 px-4 pt-6 pb-20">
+    <main class="w-full flex-1 pt-5 pb-20">
       <slot />
     </main>
 
     <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-[393px] max-w-full bg-white border-t border-[#d6d6d6] px-4 py-2 z-50">
+    <nav class="fixed bottom-0 w-full max-w-full bg-white border-t border-[#d6d6d6] py-2 z-50">
       <div class="flex items-center justify-around">
         <NuxtLink
           v-for="item in navItems"
           :key="item.path"
           :to="item.path"
           class="flex flex-col items-center gap-1 py-2 px-3 transition-colors"
-          :class="isActive(item.path) ? 'text-[#ef781e]' : 'text-[#545454]'"
+          :class="isActive(item.path) ? 'text-tango-500' : 'text-[#545454]'"
         >
           <!-- Home icon -->
           <svg
