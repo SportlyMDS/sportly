@@ -19,6 +19,7 @@ export const events = pgTable('events', {
   accessibility: varchar('accessibility').array(), // ex: {HANDISPORT, MIXTE}
   paymentProvider: varchar('payment_provider', { length: 40 }), // STRIPE, PAYPAL
   price: numeric('price', { precision: 10, scale: 2 }).default('0'),
+  maxParticipants: integer('max_participants'),
   createdAt: timestamp('created_at').defaultNow()
 })
 
