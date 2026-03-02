@@ -1,17 +1,27 @@
 <script setup lang="ts">
+import ClubDetailsCard from '~/components/dashboard/ClubDetailsCard.vue'
+import SearchFilters from '~/components/dashboard/SearchFilters.vue'
+
 definePageMeta({
   layout: 'dashboard'
 })
 
+const LILLE_CENTER: [number, number] = [50.6292, 3.0573]
+
 const searchQuery = ref('')
 const showFavoritesOnly = ref(false)
 const selectedDistance = ref('30km')
-const showDistanceDropdown = ref(false)
 const selectedCategory = ref('')
-const showCategoryDropdown = ref(false)
 
 const distances = ['5km', '10km', '20km', '30km', '50km']
-const categories = ['Football', 'Rugby', 'Natation', 'Musculation', 'Basketball', 'Course', 'Cyclisme']
+const categories = ['Football', 'Rugby', 'Natation', 'Musculation', 'Basketball', 'Course', 'Cyclisme', 'Athlétisme', 'Boxe']
+
+// Map drawer state
+const showMapDrawer = ref(false)
+const mapZoom = ref(13)
+const mapCenter = ref<[number, number]>(LILLE_CENTER)
+const isLocating = ref(false)
+const mapSelectedClub = ref<typeof allClubs[0] | null>(null)
 
 // Clubs data
 const allClubs = reactive([
@@ -22,6 +32,8 @@ const allClubs = reactive([
     image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop',
     distance: '3,45km',
     isOpen: true,
+    latitude: 50.6374,
+    longitude: 3.0701,
     sports: [
       { emoji: '⚽', name: 'Football' },
       { emoji: '🏉', name: 'Rugby' },
@@ -29,7 +41,7 @@ const allClubs = reactive([
     ],
     tags: [
       { emoji: '✅', name: 'Débutant' },
-      { emoji: '✅', name: 'Handicapé' }
+      { emoji: '✅', name: 'Situ. de handicap.' }
     ],
     isFavorite: false
   },
@@ -40,14 +52,15 @@ const allClubs = reactive([
     image: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=400&h=300&fit=crop',
     distance: '5,2km',
     isOpen: false,
+    latitude: 50.6242,
+    longitude: 3.0432,
     sports: [
       { emoji: '🏃', name: 'Athlétisme' },
       { emoji: '🏊', name: 'Natation' },
       { emoji: '🚴', name: 'Cyclisme' }
     ],
     tags: [
-      { emoji: '✅', name: 'Intermédiaire' },
-      { emoji: '❌', name: 'Handicapé' }
+      { emoji: '✅', name: 'Intermédiaire' }
     ],
     isFavorite: false
   },
@@ -58,6 +71,8 @@ const allClubs = reactive([
     image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',
     distance: '1,8km',
     isOpen: true,
+    latitude: 50.6321,
+    longitude: 3.0612,
     sports: [
       { emoji: '💪', name: 'Musculation' },
       { emoji: '🥊', name: 'Boxe' }
@@ -69,8 +84,20 @@ const allClubs = reactive([
   }
 ])
 
+const selectedClub = ref<typeof allClubs[0] | null>(null)
+const showClubDetails = ref(false)
+
+function parseDistanceKm(distance: string) {
+  const normalized = distance.replace(',', '.').replace(/\s+/g, '').toLowerCase()
+  const match = normalized.match(/[\d.]+/)
+
+  return match ? Number.parseFloat(match[0]) : Number.POSITIVE_INFINITY
+}
+
 // Filtered clubs based on search and filters
 const filteredClubs = computed(() => {
+  const maxDistance = parseDistanceKm(selectedDistance.value)
+
   return allClubs.filter((club) => {
     // Search filter
     const query = searchQuery.value.toLowerCase()
@@ -85,13 +112,72 @@ const filteredClubs = computed(() => {
     const matchesCategory = !selectedCategory.value
       || club.sports.some(s => s.name === selectedCategory.value)
 
-    return matchesSearch && matchesFavorites && matchesCategory
+    // Distance filter
+    const matchesDistance = !selectedDistance.value
+      || parseDistanceKm(club.distance) <= maxDistance
+
+    return matchesSearch && matchesFavorites && matchesCategory && matchesDistance
   })
 })
 
 function toggleFavorite(club: typeof allClubs[0]) {
   club.isFavorite = !club.isFavorite
 }
+
+function openClubDetails(club: typeof allClubs[0]) {
+  selectedClub.value = club
+  showClubDetails.value = true
+}
+
+function closeClubDetails() {
+  showClubDetails.value = false
+  selectedClub.value = null
+}
+
+// Map drawer functions
+function openMapDrawer() {
+  showMapDrawer.value = true
+  requestGeolocation()
+}
+
+function onMarkerClick(club: typeof allClubs[0]) {
+  mapSelectedClub.value = club
+  mapCenter.value = [club.latitude, club.longitude]
+  mapZoom.value = 15
+}
+
+function closeMapClubSheet() {
+  mapSelectedClub.value = null
+}
+
+function onMapClick() {
+  mapSelectedClub.value = null
+}
+
+function requestGeolocation() {
+  if (!navigator.geolocation) return
+
+  isLocating.value = true
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords
+      mapCenter.value = [latitude, longitude]
+      mapZoom.value = 14
+      isLocating.value = false
+    },
+    () => {
+      isLocating.value = false
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  )
+}
+
+watch(filteredClubs, (clubsList) => {
+  if (mapSelectedClub.value && !clubsList.some(club => club.id === mapSelectedClub.value?.id)) {
+    closeMapClubSheet()
+  }
+})
 </script>
 
 <template>
@@ -106,181 +192,22 @@ function toggleFavorite(club: typeof allClubs[0]) {
     </div>
 
     <!-- Search and Filters -->
-    <div class="bg-white px-4 py-4 flex flex-col gap-3">
-      <!-- Search bar -->
-      <div class="relative">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Rechercher des clubs, activités"
-          class="search-input w-full bg-white border border-[#d6d6d6] h-12 pl-4 pr-12 text-base text-[#1c1c1c] placeholder-[rgba(28,28,28,0.5)] font-roboto focus:outline-none focus:border-[#ef781e]"
-        >
-        <button class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center">
-          <svg
-            class="text-[#ef781e]"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              cx="11"
-              cy="11"
-              r="8"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M21 21L16.65 16.65"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Filter buttons -->
-      <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-        <!-- Favorites toggle -->
-        <button
-          class="h-10 w-12 shrink-0 border rounded-full flex items-center justify-center transition-colors"
-          :class="showFavoritesOnly ? 'border-[#ef781e] bg-[rgba(239,120,30,0.1)]' : 'border-[#d6d6d6] bg-white'"
-          @click="showFavoritesOnly = !showFavoritesOnly"
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            :fill="showFavoritesOnly ? '#ef781e' : 'none'"
-            :class="showFavoritesOnly ? 'text-[#ef781e]' : 'text-[#545454]'"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-
-        <!-- Distance dropdown -->
-        <div class="relative shrink-0">
-          <button
-            class="h-10 px-4 border border-[#d6d6d6] bg-white rounded-full flex items-center gap-2 text-sm font-roboto text-[#1c1c1c] whitespace-nowrap"
-            @click="showDistanceDropdown = !showDistanceDropdown"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              <circle
-                cx="12"
-                cy="10"
-                r="3"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <span>Rayon | {{ selectedDistance }}</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
-              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </button>
-          <div
-            v-if="showDistanceDropdown"
-            class="absolute top-full left-0 mt-1 bg-white border border-[#d6d6d6] rounded-lg shadow-lg z-10 min-w-full"
-          >
-            <button
-              v-for="dist in distances"
-              :key="dist"
-              class="w-full px-3 py-2 text-left text-sm font-roboto hover:bg-gray-100"
-              :class="selectedDistance === dist ? 'text-[#ef781e]' : 'text-[#1c1c1c]'"
-              @click="selectedDistance = dist; showDistanceDropdown = false"
-            >
-              {{ dist }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Categories dropdown -->
-        <div class="relative shrink-0">
-          <button
-            class="h-10 px-4 w-full border border-[#d6d6d6] bg-white rounded-full flex items-center justify-between gap-2 text-sm font-roboto text-[#1c1c1c]"
-            @click="showCategoryDropdown = !showCategoryDropdown"
-          >
-            <div class="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
-                <line
-                  x1="4"
-                  y1="6"
-                  x2="20"
-                  y2="6"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-                <line
-                  x1="4"
-                  y1="12"
-                  x2="20"
-                  y2="12"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-                <line
-                  x1="4"
-                  y1="18"
-                  x2="20"
-                  y2="18"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
-              <span>{{ selectedCategory || 'Catégories' }}</span>
-            </div>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="text-[#545454]">
-              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </button>
-          <div
-            v-if="showCategoryDropdown"
-            class="absolute top-full left-0 mt-1 bg-white border border-[#d6d6d6] rounded-lg shadow-lg z-10 w-full"
-          >
-            <button
-              class="w-full px-3 py-2 text-left text-sm font-roboto hover:bg-gray-100 text-[#545454]"
-              @click="selectedCategory = ''; showCategoryDropdown = false"
-            >
-              Toutes
-            </button>
-            <button
-              v-for="cat in categories"
-              :key="cat"
-              class="w-full px-3 py-2 text-left text-sm font-roboto hover:bg-gray-100"
-              :class="selectedCategory === cat ? 'text-[#ef781e]' : 'text-[#1c1c1c]'"
-              @click="selectedCategory = cat; showCategoryDropdown = false"
-            >
-              {{ cat }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <SearchFilters
+      v-model:search-query="searchQuery"
+      v-model:show-favorites-only="showFavoritesOnly"
+      v-model:selected-distance="selectedDistance"
+      v-model:selected-category="selectedCategory"
+      :distances="distances"
+      :categories="categories"
+    />
 
     <!-- Club cards -->
     <div class="flex flex-col gap-4 px-4 pt-4">
       <div
         v-for="club in filteredClubs"
         :key="club.id"
-        class="club-card relative h-[224px] rounded-xl overflow-hidden shadow-sm"
+        class="club-card relative h-[224px] rounded-xl overflow-hidden shadow-sm cursor-pointer"
+        @click="openClubDetails(club)"
       >
         <!-- Background image -->
         <img
@@ -303,8 +230,8 @@ function toggleFavorite(club: typeof allClubs[0]) {
         <!-- Favorite button -->
         <button
           class="absolute top-3 right-3 w-10 h-10 rounded-full bg-[rgba(255,255,255,0.9)] flex items-center justify-center shadow-md transition-colors"
-          :class="club.isFavorite ? 'text-[#ef781e]' : 'text-[#545454]'"
-          @click="toggleFavorite(club)"
+          :class="club.isFavorite ? 'text-tango-500' : 'text-[#545454]'"
+          @click.stop="toggleFavorite(club)"
         >
           <svg
             width="20"
@@ -373,13 +300,26 @@ function toggleFavorite(club: typeof allClubs[0]) {
     </div>
 
     <!-- Floating Map button -->
-    <NuxtLink
-      to="/dashboard/carte"
+    <button
+      type="button"
       class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-white border border-[#d6d6d6] px-6 py-3 rounded-full shadow-lg flex items-center gap-2 z-40 hover:shadow-xl transition-shadow"
+      @click="openMapDrawer"
     >
       <span class="text-base font-medium text-[#1c1c1c] font-roboto">Carte</span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-[#1c1c1c]">
-        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        class="text-[#1c1c1c]"
+      >
+        <polygon
+          points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
         <line
           x1="8"
           y1="2"
@@ -401,7 +341,139 @@ function toggleFavorite(club: typeof allClubs[0]) {
           stroke-linejoin="round"
         />
       </svg>
-    </NuxtLink>
+    </button>
+
+    <!-- Map Drawer -->
+    <UDrawer
+      v-model:open="showMapDrawer"
+      title="Carte"
+      direction="bottom"
+      :handle="true"
+      :overlay="true"
+      :ui="{
+        content: 'h-dvh rounded-t-2xl',
+        handle: 'bg-[#d6d6d6] w-10',
+        overlay: 'bg-black/35',
+        title: 'sr-only',
+        header: 'hidden'
+      }"
+      @close="closeMapClubSheet"
+    >
+      <template #content>
+        <div class="flex flex-col h-full overflow-hidden rounded-t-2xl bg-white">
+          <!-- Search and Filters inside drawer -->
+          <SearchFilters
+            v-model:search-query="searchQuery"
+            v-model:show-favorites-only="showFavoritesOnly"
+            v-model:selected-distance="selectedDistance"
+            v-model:selected-category="selectedCategory"
+            :distances="distances"
+            :categories="categories"
+          />
+
+          <!-- Map -->
+          <div class="flex-1 relative">
+            <ClientOnly>
+              <LMap
+                :zoom="mapZoom"
+                :center="mapCenter"
+                :use-global-leaflet="false"
+                :options="{ zoomControl: false }"
+                class="w-full h-full"
+                @click="onMapClick"
+              >
+                <LTileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors"
+                  layer-type="base"
+                  name="OpenStreetMap"
+                />
+                <LMarker
+                  v-for="club in filteredClubs"
+                  :key="club.id"
+                  :lat-lng="[club.latitude, club.longitude]"
+                  :options="{ bubblingMouseEvents: false }"
+                  @click="onMarkerClick(club)"
+                >
+                  <LIcon
+                    :icon-url="'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='36' height='44' viewBox='0 0 36 44'><path d='M18 0C8.06 0 0 8.06 0 18c0 13.5 18 26 18 26S36 31.5 36 18C36 8.06 27.94 0 18 0z' fill='${club.id === mapSelectedClub?.id ? '#ef781e' : '#1c1c1c'}'/><text x='18' y='24' text-anchor='middle' font-size='16'>${club.emoji}</text></svg>`)"
+                    :icon-size="[36, 44]"
+                    :icon-anchor="[18, 44]"
+                  />
+                </LMarker>
+              </LMap>
+              <template #fallback>
+                <div class="flex-1 bg-gray-100 flex items-center justify-center">
+                  <UIcon name="i-heroicons-map" class="w-16 h-16 text-gray-400" />
+                </div>
+              </template>
+            </ClientOnly>
+
+            <!-- Locate button -->
+            <button
+              type="button"
+              class="absolute right-4 z-1000 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+              :class="mapSelectedClub ? 'bottom-[220px]' : 'bottom-6'"
+              :disabled="isLocating"
+              @click="requestGeolocation"
+            >
+              <UIcon
+                :name="isLocating ? 'i-heroicons-map-pin' : 'i-heroicons-paper-airplane'"
+                :class="[
+                  'w-5 h-5',
+                  isLocating ? 'animate-pulse text-tango-500' : 'text-gray-600 rotate-45'
+                ]"
+              />
+            </button>
+
+            <!-- Club bottom sheet inside map -->
+            <Transition name="sheet">
+              <div
+                v-if="mapSelectedClub"
+                class="absolute bottom-0 left-0 right-0 z-1000 bg-white rounded-t-2xl shadow-2xl"
+              >
+                <div class="flex justify-center pt-3 pb-2">
+                  <div class="w-10 h-1 bg-[#d6d6d6] rounded-full" />
+                </div>
+
+                <ClubDetailsCard
+                  :club="mapSelectedClub"
+                  @close="closeMapClubSheet"
+                  @toggle-favorite="toggleFavorite(mapSelectedClub!)"
+                />
+              </div>
+            </Transition>
+          </div>
+        </div>
+      </template>
+    </UDrawer>
+
+    <!-- Club details overlay (list view) -->
+    <Transition name="club-details-overlay">
+      <div
+        v-if="showClubDetails && selectedClub"
+        class="fixed inset-0 z-50 bg-black/35"
+        @click="closeClubDetails"
+      >
+        <Transition name="club-details-sheet">
+          <div
+            v-if="showClubDetails && selectedClub"
+            class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl"
+            @click.stop
+          >
+            <div class="flex justify-center pt-3 pb-2">
+              <div class="w-10 h-1 bg-[#d6d6d6] rounded-full" />
+            </div>
+
+            <ClubDetailsCard
+              :club="selectedClub"
+              @close="closeClubDetails"
+              @toggle-favorite="toggleFavorite(selectedClub)"
+            />
+          </div>
+        </Transition>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -410,20 +482,37 @@ function toggleFavorite(club: typeof allClubs[0]) {
   font-family: 'Roboto', sans-serif;
 }
 
-.search-input {
-  border-radius: 12px !important;
-}
-
 .club-card {
   border-radius: 12px !important;
 }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.club-details-overlay-enter-active,
+.club-details-overlay-leave-active {
+  transition: opacity 0.25s ease;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+.club-details-overlay-enter-from,
+.club-details-overlay-leave-to {
+  opacity: 0;
+}
+
+.club-details-sheet-enter-active,
+.club-details-sheet-leave-active {
+  transition: transform 0.25s ease;
+}
+
+.club-details-sheet-enter-from,
+.club-details-sheet-leave-to {
+  transform: translateY(100%);
+}
+
+.sheet-enter-active,
+.sheet-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.sheet-enter-from,
+.sheet-leave-to {
+  transform: translateY(100%);
 }
 </style>
