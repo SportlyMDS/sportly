@@ -6,6 +6,8 @@ definePageMeta({
   layout: 'dashboard'
 })
 
+const LILLE_CENTER: [number, number] = [50.6292, 3.0573]
+
 const searchQuery = ref('')
 const showFavoritesOnly = ref(false)
 const selectedDistance = ref('30km')
@@ -13,6 +15,13 @@ const selectedCategory = ref('')
 
 const distances = ['5km', '10km', '20km', '30km', '50km']
 const categories = ['Football', 'Rugby', 'Natation', 'Musculation', 'Basketball', 'Course', 'Cyclisme', 'Athlétisme', 'Boxe']
+
+// Map drawer state
+const showMapDrawer = ref(false)
+const mapZoom = ref(13)
+const mapCenter = ref<[number, number]>(LILLE_CENTER)
+const isLocating = ref(false)
+const mapSelectedClub = ref<typeof allClubs[0] | null>(null)
 
 // Clubs data
 const allClubs = reactive([
@@ -23,6 +32,8 @@ const allClubs = reactive([
     image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop',
     distance: '3,45km',
     isOpen: true,
+    latitude: 50.6374,
+    longitude: 3.0701,
     sports: [
       { emoji: '⚽', name: 'Football' },
       { emoji: '🏉', name: 'Rugby' },
@@ -30,7 +41,7 @@ const allClubs = reactive([
     ],
     tags: [
       { emoji: '✅', name: 'Débutant' },
-      { emoji: '✅', name: 'Handicapé' }
+      { emoji: '✅', name: 'Situ. de handicap.' }
     ],
     isFavorite: false
   },
@@ -41,14 +52,15 @@ const allClubs = reactive([
     image: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=400&h=300&fit=crop',
     distance: '5,2km',
     isOpen: false,
+    latitude: 50.6242,
+    longitude: 3.0432,
     sports: [
       { emoji: '🏃', name: 'Athlétisme' },
       { emoji: '🏊', name: 'Natation' },
       { emoji: '🚴', name: 'Cyclisme' }
     ],
     tags: [
-      { emoji: '✅', name: 'Intermédiaire' },
-      { emoji: '❌', name: 'Handicapé' }
+      { emoji: '✅', name: 'Intermédiaire' }
     ],
     isFavorite: false
   },
@@ -59,6 +71,8 @@ const allClubs = reactive([
     image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',
     distance: '1,8km',
     isOpen: true,
+    latitude: 50.6321,
+    longitude: 3.0612,
     sports: [
       { emoji: '💪', name: 'Musculation' },
       { emoji: '🥊', name: 'Boxe' }
@@ -119,6 +133,51 @@ function closeClubDetails() {
   showClubDetails.value = false
   selectedClub.value = null
 }
+
+// Map drawer functions
+function openMapDrawer() {
+  showMapDrawer.value = true
+  requestGeolocation()
+}
+
+function onMarkerClick(club: typeof allClubs[0]) {
+  mapSelectedClub.value = club
+  mapCenter.value = [club.latitude, club.longitude]
+  mapZoom.value = 15
+}
+
+function closeMapClubSheet() {
+  mapSelectedClub.value = null
+}
+
+function onMapClick() {
+  mapSelectedClub.value = null
+}
+
+function requestGeolocation() {
+  if (!navigator.geolocation) return
+
+  isLocating.value = true
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords
+      mapCenter.value = [latitude, longitude]
+      mapZoom.value = 14
+      isLocating.value = false
+    },
+    () => {
+      isLocating.value = false
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  )
+}
+
+watch(filteredClubs, (clubsList) => {
+  if (mapSelectedClub.value && !clubsList.some(club => club.id === mapSelectedClub.value?.id)) {
+    closeMapClubSheet()
+  }
+})
 </script>
 
 <template>
@@ -241,13 +300,26 @@ function closeClubDetails() {
     </div>
 
     <!-- Floating Map button -->
-    <NuxtLink
-      to="/dashboard/carte"
+    <button
+      type="button"
       class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-white border border-[#d6d6d6] px-6 py-3 rounded-full shadow-lg flex items-center gap-2 z-40 hover:shadow-xl transition-shadow"
+      @click="openMapDrawer"
     >
       <span class="text-base font-medium text-[#1c1c1c] font-roboto">Carte</span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-[#1c1c1c]">
-        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        class="text-[#1c1c1c]"
+      >
+        <polygon
+          points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
         <line
           x1="8"
           y1="2"
@@ -269,8 +341,114 @@ function closeClubDetails() {
           stroke-linejoin="round"
         />
       </svg>
-    </NuxtLink>
+    </button>
 
+    <!-- Map Drawer -->
+    <UDrawer
+      v-model:open="showMapDrawer"
+      title="Carte"
+      direction="bottom"
+      :handle="true"
+      :overlay="true"
+      :ui="{
+        content: 'h-dvh rounded-t-2xl',
+        handle: 'bg-[#d6d6d6] w-10',
+        overlay: 'bg-black/35',
+        title: 'sr-only',
+        header: 'hidden'
+      }"
+      @close="closeMapClubSheet"
+    >
+      <template #content>
+        <div class="flex flex-col h-full overflow-hidden rounded-t-2xl bg-white">
+          <!-- Search and Filters inside drawer -->
+          <SearchFilters
+            v-model:search-query="searchQuery"
+            v-model:show-favorites-only="showFavoritesOnly"
+            v-model:selected-distance="selectedDistance"
+            v-model:selected-category="selectedCategory"
+            :distances="distances"
+            :categories="categories"
+          />
+
+          <!-- Map -->
+          <div class="flex-1 relative">
+            <ClientOnly>
+              <LMap
+                :zoom="mapZoom"
+                :center="mapCenter"
+                :use-global-leaflet="false"
+                :options="{ zoomControl: false }"
+                class="w-full h-full"
+                @click="onMapClick"
+              >
+                <LTileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors"
+                  layer-type="base"
+                  name="OpenStreetMap"
+                />
+                <LMarker
+                  v-for="club in filteredClubs"
+                  :key="club.id"
+                  :lat-lng="[club.latitude, club.longitude]"
+                  :options="{ bubblingMouseEvents: false }"
+                  @click="onMarkerClick(club)"
+                >
+                  <LIcon
+                    :icon-url="'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='36' height='44' viewBox='0 0 36 44'><path d='M18 0C8.06 0 0 8.06 0 18c0 13.5 18 26 18 26S36 31.5 36 18C36 8.06 27.94 0 18 0z' fill='${club.id === mapSelectedClub?.id ? '#ef781e' : '#1c1c1c'}'/><text x='18' y='24' text-anchor='middle' font-size='16'>${club.emoji}</text></svg>`)"
+                    :icon-size="[36, 44]"
+                    :icon-anchor="[18, 44]"
+                  />
+                </LMarker>
+              </LMap>
+              <template #fallback>
+                <div class="flex-1 bg-gray-100 flex items-center justify-center">
+                  <UIcon name="i-heroicons-map" class="w-16 h-16 text-gray-400" />
+                </div>
+              </template>
+            </ClientOnly>
+
+            <!-- Locate button -->
+            <button
+              type="button"
+              class="absolute right-4 z-1000 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+              :class="mapSelectedClub ? 'bottom-[220px]' : 'bottom-6'"
+              :disabled="isLocating"
+              @click="requestGeolocation"
+            >
+              <UIcon
+                :name="isLocating ? 'i-heroicons-map-pin' : 'i-heroicons-paper-airplane'"
+                :class="[
+                  'w-5 h-5',
+                  isLocating ? 'animate-pulse text-tango-500' : 'text-gray-600 rotate-45'
+                ]"
+              />
+            </button>
+
+            <!-- Club bottom sheet inside map -->
+            <Transition name="sheet">
+              <div
+                v-if="mapSelectedClub"
+                class="absolute bottom-0 left-0 right-0 z-1000 bg-white rounded-t-2xl shadow-2xl"
+              >
+                <div class="flex justify-center pt-3 pb-2">
+                  <div class="w-10 h-1 bg-[#d6d6d6] rounded-full" />
+                </div>
+
+                <ClubDetailsCard
+                  :club="mapSelectedClub"
+                  @close="closeMapClubSheet"
+                  @toggle-favorite="toggleFavorite(mapSelectedClub!)"
+                />
+              </div>
+            </Transition>
+          </div>
+        </div>
+      </template>
+    </UDrawer>
+
+    <!-- Club details overlay (list view) -->
     <Transition name="club-details-overlay">
       <div
         v-if="showClubDetails && selectedClub"
@@ -325,6 +503,16 @@ function closeClubDetails() {
 
 .club-details-sheet-enter-from,
 .club-details-sheet-leave-to {
+  transform: translateY(100%);
+}
+
+.sheet-enter-active,
+.sheet-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.sheet-enter-from,
+.sheet-leave-to {
   transform: translateY(100%);
 }
 </style>
