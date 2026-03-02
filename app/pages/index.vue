@@ -1,8 +1,37 @@
 <script setup lang="ts">
+import { useAuth } from '~/composables/useAuth'
+
 definePageMeta({
   middleware: ['guest'],
   layout: 'auth'
 })
+
+const { signIn } = useAuth()
+const isLoggingIn = ref(false)
+
+const handleQuickLogin = async () => {
+  isLoggingIn.value = true
+  try {
+    const { fetchSession } = useAuth()
+    const { error } = await signIn.email({
+      email: 'louis.floquet+3@proton.me',
+      password: '***REMOVED***', // à mettre le mot de passe /!\
+      fetchOptions: {
+        onSuccess: async () => {
+          await fetchSession()
+        }
+      }
+    })
+
+    if (error) throw error
+
+    await navigateTo('/dashboard/user')
+  } catch (error) {
+    console.error('Quick login failed:', error)
+  } finally {
+    isLoggingIn.value = false
+  }
+}
 
 const heroImage = '/sportif.png'
 const decorativeShape = '/decorativeShape.png'
@@ -45,8 +74,21 @@ const decorativeShape = '/decorativeShape.png'
 
       <!-- Buttons -->
       <div class="relative z-10 w-full flex flex-col gap-2">
+        <DevOnly>
+          <UButton
+            color="primary"
+            variant="solid"
+            block
+            size="lg"
+            class="rounded-full h-10 mb-2"
+            :loading="isLoggingIn"
+            @click="handleQuickLogin"
+          >
+            Quick Login (Dev)
+          </UButton>
+        </DevOnly>
         <UButton
-          to="/login"
+          to="/auth/login"
           block
           size="lg"
           class="rounded-full h-10"
