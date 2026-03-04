@@ -77,8 +77,7 @@ async function seed() {
     const existing = await db.select().from(schema.sports).where(eq(schema.sports.code, s.code)).limit(1)
     if (existing[0]) {
       sportIds[s.code] = existing[0].id
-    }
-    else {
+    } else {
       const [row] = await db.insert(schema.sports).values(s).returning({ id: schema.sports.id })
       sportIds[s.code] = row.id
     }
