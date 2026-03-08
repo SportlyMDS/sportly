@@ -8,7 +8,8 @@ import {
   sports,
   eventPhotos,
   mediaFiles,
-  eventParticipants
+  eventParticipants,
+  clubs
 } from '../../db/schema'
 
 export default defineEventHandler(async (event) => {
@@ -39,7 +40,21 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // 2. Adresse
+    // 2. Organisateur (club)
+    let organizer = null
+    const clubResult = await db
+      .select({
+        clubName: clubs.clubName,
+        logoMediaId: clubs.logoMediaId
+      })
+      .from(clubs)
+      .where(eq(clubs.accountId, evt.organizerId))
+      .limit(1)
+    if (clubResult[0]) {
+      organizer = clubResult[0]
+    }
+
+    // 3. Adresse
     let address = null
     if (evt.addressId) {
       const addressResult = await db
@@ -50,7 +65,7 @@ export default defineEventHandler(async (event) => {
       address = addressResult[0] ?? null
     }
 
-    // 3. Sports liés
+    // 4. Sports liés
     const sportsResult = await db
       .select({
         sportId: eventSports.sportId,
@@ -62,7 +77,7 @@ export default defineEventHandler(async (event) => {
       .innerJoin(sports, eq(sports.id, eventSports.sportId))
       .where(eq(eventSports.eventId, id))
 
-    // 4. Photos
+    // 5. Photos
     const photosResult = await db
       .select({
         id: eventPhotos.id,
@@ -74,7 +89,7 @@ export default defineEventHandler(async (event) => {
       .leftJoin(mediaFiles, eq(mediaFiles.id, eventPhotos.mediaId))
       .where(eq(eventPhotos.eventId, id))
 
-    // 5. Nombre de participants inscrits
+    // 6. Nombre de participants inscrits
     const participantCountResult = await db
       .select({ count: sql<number>`count(*)` })
       .from(eventParticipants)
@@ -84,6 +99,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       ...evt,
+      organizer,
       address,
       sports: sportsResult,
       photos: photosResult,

@@ -16,7 +16,7 @@ function addRooms() {
 function createEvent() {
   // TODO: Navigate to create event page
   console.log('Create event')
-  navigateTo('/dashboard/club/evenements/new')
+  navigateTo('/dashboard/club/events/new')
 }
 
 function skipForNow() {
