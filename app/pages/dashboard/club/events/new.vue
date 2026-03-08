@@ -400,8 +400,8 @@ async function handleSubmit() {
                 />
               </div>
 
-              <div class="flex gap-4">
-                <div class="flex-1 flex flex-col gap-2">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
                   <label class="text-sm font-medium text-[#212121] font-montserrat">Prix</label>
                   <input
                     v-model.number="price"
@@ -412,8 +412,8 @@ async function handleSubmit() {
                     class="w-full bg-[#f7f7f7] border border-[#d6d6d6] rounded-lg h-12 px-4 text-base text-[#212121] placeholder-[#999] font-montserrat focus:outline-none focus:border-[#ef781e]"
                   >
                 </div>
-                <div class="flex-1 flex flex-col gap-2">
-                  <label class="text-sm font-medium text-[#212121] font-montserrat">Nombre de participants</label>
+                <div class="flex flex-col gap-2">
+                  <label class="text-sm font-medium text-[#212121] font-montserrat">Participants max</label>
                   <input
                     v-model.number="maxParticipants"
                     type="number"
