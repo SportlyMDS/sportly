@@ -4,8 +4,8 @@ const route = useRoute()
 const navItems = [
   { icon: 'home', label: 'Accueil', path: '/dashboard' },
   { icon: 'search', label: 'Recherche', path: '/dashboard/recherche' },
-  { icon: 'plus', label: 'Créer', path: '/dashboard/creer' },
-  { icon: 'calendar', label: 'Événements', path: '/dashboard/evenements' },
+  { icon: 'plus', label: 'Créer', path: '/dashboard/club/events/new' },
+  { icon: 'calendar', label: 'Événements', path: '/events' },
   { icon: 'user', label: 'Profil', path: '/dashboard/profil' }
 ]
 
