@@ -1,17 +1,23 @@
 <script setup lang="ts">
 const route = useRoute()
+const { user } = useAuth()
 
-const navItems = [
+const isClub = computed(() => (user.value as any)?.accountType === 'CLUB')
+
+const navItems = computed(() => [
   { icon: 'home', label: 'Accueil', path: '/dashboard' },
   { icon: 'search', label: 'Recherche', path: '/dashboard/recherche' },
   { icon: 'plus', label: 'Créer', path: '/dashboard/club/events/new' },
   { icon: 'calendar', label: 'Événements', path: '/events' },
-  { icon: 'user', label: 'Profil', path: '/dashboard/profil' }
-]
+  { icon: 'user', label: 'Profil', path: isClub.value ? '/dashboard/club' : '/dashboard/profil' }
+])
 
 function isActive(path: string) {
   if (path === '/dashboard') {
     return route.path === '/dashboard'
+  }
+  if (path === '/dashboard/club') {
+    return route.path === '/dashboard/club'
   }
   return route.path.startsWith(path)
 }
