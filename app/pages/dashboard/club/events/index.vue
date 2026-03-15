@@ -92,7 +92,9 @@ async function deleteEvent(eventId: string) {
             <path d="M15 18L9 12L15 6" stroke="#1c1c1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
-        <h1 class="text-xl font-semibold text-[#1c1c1c] font-asap">Mes événements</h1>
+        <h1 class="text-xl font-semibold text-[#1c1c1c] font-asap">
+          Mes événements
+        </h1>
       </div>
       <NuxtLink
         to="/dashboard/club/events/new"
@@ -132,8 +134,21 @@ async function deleteEvent(eventId: string) {
     <div v-else-if="displayedEvents.length === 0" class="flex flex-col items-center justify-center py-20 px-4 text-center">
       <div class="size-16 rounded-full bg-[#f0f0f0] flex items-center justify-center mb-4">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="4" width="18" height="18" rx="2" stroke="#999" stroke-width="1.5" />
-          <path d="M16 2V6M8 2V6M3 10H21" stroke="#999" stroke-width="1.5" stroke-linecap="round" />
+          <rect
+            x="3"
+            y="4"
+            width="18"
+            height="18"
+            rx="2"
+            stroke="#999"
+            stroke-width="1.5"
+          />
+          <path
+            d="M16 2V6M8 2V6M3 10H21"
+            stroke="#999"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
         </svg>
       </div>
       <p class="text-base font-semibold text-[#1c1c1c] font-asap mb-1">

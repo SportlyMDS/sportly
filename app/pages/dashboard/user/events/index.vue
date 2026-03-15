@@ -92,7 +92,9 @@ async function deleteEvent(eventId: string) {
             <path d="M15 18L9 12L15 6" stroke="#1c1c1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
-        <h1 class="text-xl font-semibold text-[#1c1c1c] font-asap">Mes événements</h1>
+        <h1 class="text-xl font-semibold text-[#1c1c1c] font-asap">
+          Mes événements
+        </h1>
       </div>
       <NuxtLink
         to="/dashboard/user/events/new"
