@@ -10,6 +10,11 @@ useHead({
 const searchQuery = ref('')
 const selectedType = ref('')
 const selectedSport = ref('')
+const selectedDateRange = ref('')
+const customDateFrom = ref('')
+const customDateTo = ref('')
+const selectedCity = ref('')
+const showFilters = ref(false)
 
 const eventTypes = [
   { value: '', label: 'Tous' },
@@ -19,8 +24,55 @@ const eventTypes = [
   { value: 'DECOUVERTE', label: '🔍 Découverte' }
 ]
 
+const dateRanges = [
+  { value: '', label: 'Toutes dates' },
+  { value: 'today', label: 'Aujourd\'hui' },
+  { value: 'week', label: 'Cette semaine' },
+  { value: 'month', label: 'Ce mois' },
+  { value: 'custom', label: 'Personnalisé' }
+]
+
+function getDateRange(range: string): { from?: string, to?: string } {
+  const now = new Date()
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+  switch (range) {
+    case 'today': {
+      const endOfDay = new Date(startOfDay)
+      endOfDay.setDate(endOfDay.getDate() + 1)
+      return { from: startOfDay.toISOString(), to: endOfDay.toISOString() }
+    }
+    case 'week': {
+      const endOfWeek = new Date(startOfDay)
+      endOfWeek.setDate(endOfWeek.getDate() + (7 - endOfWeek.getDay()))
+      return { from: startOfDay.toISOString(), to: endOfWeek.toISOString() }
+    }
+    case 'month': {
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      return { from: startOfDay.toISOString(), to: endOfMonth.toISOString() }
+    }
+    case 'custom': {
+      const result: { from?: string, to?: string } = {}
+      if (customDateFrom.value) result.from = new Date(customDateFrom.value).toISOString()
+      if (customDateTo.value) result.to = new Date(customDateTo.value + 'T23:59:59').toISOString()
+      return result
+    }
+    default:
+      return {}
+  }
+}
+
 const limit = ref(20)
 const offset = ref(0)
+
+const activeFilterCount = computed(() => {
+  let count = 0
+  if (selectedType.value) count++
+  if (selectedSport.value) count++
+  if (selectedDateRange.value) count++
+  if (selectedCity.value) count++
+  return count
+})
 
 const queryParams = computed(() => {
   const params: Record<string, string | number> = {
@@ -29,6 +81,12 @@ const queryParams = computed(() => {
   }
   if (selectedType.value) params.type = selectedType.value
   if (selectedSport.value) params.sport = selectedSport.value
+  if (selectedCity.value) params.city = selectedCity.value
+
+  const dateRange = getDateRange(selectedDateRange.value)
+  if (dateRange.from) params.dateFrom = dateRange.from
+  if (dateRange.to) params.dateTo = dateRange.to
+
   return params
 })
 
@@ -75,10 +133,15 @@ function loadMore() {
 function resetFilters() {
   selectedType.value = ''
   selectedSport.value = ''
+  selectedDateRange.value = ''
+  customDateFrom.value = ''
+  customDateTo.value = ''
+  selectedCity.value = ''
+  showFilters.value = false
   offset.value = 0
 }
 
-watch([selectedType, selectedSport], () => {
+watch([selectedType, selectedSport, selectedDateRange, customDateFrom, customDateTo, selectedCity], () => {
   offset.value = 0
 })
 </script>
@@ -133,6 +196,96 @@ watch([selectedType, selectedSport], () => {
         @click="selectedType = type.value"
       >
         {{ type.label }}
+      </button>
+    </div>
+
+    <!-- Filter toggle -->
+    <button
+      class="flex items-center gap-2 text-sm font-roboto transition-colors"
+      :class="showFilters ? 'text-tango-500 font-semibold' : 'text-[#545454]'"
+      @click="showFilters = !showFilters"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M22 3H2L10 12.46V19L14 21V12.46L22 3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Filtres{{ activeFilterCount > 0 ? ` (${activeFilterCount})` : '' }}
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        class="transition-transform"
+        :class="showFilters ? 'rotate-180' : ''"
+      >
+        <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+
+    <!-- Expanded filters -->
+    <div v-if="showFilters" class="flex flex-col gap-4 bg-[#fafafa] border border-[#e8e8e8] rounded-xl p-4 -mt-2">
+      <!-- Date range -->
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-semibold text-[#1c1c1c] font-roboto uppercase tracking-wide">Date</span>
+        <div class="flex gap-2 flex-wrap">
+          <button
+            v-for="dr in dateRanges"
+            :key="dr.value"
+            class="px-3 py-1.5 rounded-full text-xs font-roboto transition-colors"
+            :class="[
+              selectedDateRange === dr.value
+                ? 'bg-[#1c1c1c] text-white'
+                : 'bg-white border border-[#d6d6d6] text-[#545454]'
+            ]"
+            @click="selectedDateRange = dr.value"
+          >
+            {{ dr.label }}
+          </button>
+        </div>
+        <!-- Custom date pickers -->
+        <div v-if="selectedDateRange === 'custom'" class="grid grid-cols-2 gap-3 mt-1">
+          <div class="flex flex-col gap-1">
+            <label class="text-xs text-[#545454] font-roboto">Du</label>
+            <input
+              v-model="customDateFrom"
+              type="date"
+              class="bg-white border border-[#d6d6d6] rounded-lg h-10 px-3 text-sm text-[#1c1c1c] font-roboto focus:outline-none focus:border-tango-500"
+            >
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs text-[#545454] font-roboto">Au</label>
+            <input
+              v-model="customDateTo"
+              type="date"
+              class="bg-white border border-[#d6d6d6] rounded-lg h-10 px-3 text-sm text-[#1c1c1c] font-roboto focus:outline-none focus:border-tango-500"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- City -->
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-semibold text-[#1c1c1c] font-roboto uppercase tracking-wide">Localisation</span>
+        <div class="relative">
+          <input
+            v-model="selectedCity"
+            type="text"
+            placeholder="Ville (ex: Lille, Paris...)"
+            class="w-full bg-white border border-[#d6d6d6] rounded-lg h-10 pl-9 pr-3 text-sm text-[#1c1c1c] placeholder-[#999] font-roboto focus:outline-none focus:border-tango-500"
+          >
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M12 13C13.66 13 15 11.66 15 10C15 8.34 13.66 7 12 7C10.34 7 9 8.34 9 10C9 11.66 10.34 13 12 13Z" stroke="#999" stroke-width="1.5" />
+            <path d="M12 22C12 22 20 16 20 10C20 5.58 16.42 2 12 2C7.58 2 4 5.58 4 10C4 16 12 22 12 22Z" stroke="#999" stroke-width="1.5" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Reset -->
+      <button
+        v-if="activeFilterCount > 0"
+        class="self-start text-xs text-tango-500 font-semibold font-roboto underline"
+        @click="resetFilters"
+      >
+        Réinitialiser tous les filtres
       </button>
     </div>
 

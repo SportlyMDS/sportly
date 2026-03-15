@@ -11,7 +11,8 @@ const querySchema = z.object({
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
   city: z.string().optional(),
-  maxPrice: z.coerce.number().min(0).optional()
+  maxPrice: z.coerce.number().min(0).optional(),
+  organizerId: z.string().optional()
 })
 
 export default defineEventHandler(async (event) => {
@@ -26,7 +27,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { limit, offset, sport, type, dateFrom, dateTo, city, maxPrice } = parseResult.data
+  const { limit, offset, sport, type, dateFrom, dateTo, city, maxPrice, organizerId } = parseResult.data
   const db = useDrizzle()
 
   try {
@@ -46,6 +47,10 @@ export default defineEventHandler(async (event) => {
 
     if (maxPrice !== undefined) {
       conditions.push(lte(events.price, String(maxPrice)))
+    }
+
+    if (organizerId) {
+      conditions.push(eq(events.organizerId, organizerId))
     }
 
     if (city) {
