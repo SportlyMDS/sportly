@@ -294,7 +294,7 @@ const OFFER_LABELS: Record<string, string> = {
       <!-- Quick Actions -->
       <div class="grid grid-cols-2 gap-4">
         <NuxtLink
-          to="/dashboard/club/events/new"
+          to="/dashboard/mon-club/events/new"
           class="bg-tango-500 text-white rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-tango-600 transition-colors"
         >
           <svg
@@ -443,7 +443,7 @@ const OFFER_LABELS: Record<string, string> = {
             Créez votre premier événement
           </p>
           <NuxtLink
-            to="/dashboard/club/events/new"
+            to="/dashboard/mon-club/events/new"
             class="bg-tango-500 text-white text-sm font-semibold px-6 py-3 rounded-full font-montserrat"
           >
             Créer un événement
@@ -469,7 +469,7 @@ const OFFER_LABELS: Record<string, string> = {
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2">
                   <NuxtLink
-                    :to="`/events/${evt.id}`"
+                    :to="`/dashboard/events/${evt.id}`"
                     class="text-base font-semibold text-[#212121] font-asap truncate hover:text-tango-500 transition-colors"
                   >
                     {{ evt.title }}
@@ -486,7 +486,7 @@ const OFFER_LABELS: Record<string, string> = {
                 </p>
               </div>
               <NuxtLink
-                :to="`/dashboard/club/events/${evt.id}/edit`"
+                :to="`/dashboard/mon-club/events/${evt.id}/edit`"
                 class="size-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors shrink-0"
               >
                 <svg
@@ -536,7 +536,7 @@ const OFFER_LABELS: Record<string, string> = {
                 </div>
               </div>
               <NuxtLink
-                :to="`/dashboard/club/events/${evt.id}/edit`"
+                :to="`/dashboard/mon-club/events/${evt.id}/edit`"
                 class="border border-[#d6d6d6] rounded-lg px-3.5 py-1.5 text-sm font-medium text-[#212121] font-montserrat hover:bg-gray-50 transition-colors whitespace-nowrap"
               >
                 Gérer

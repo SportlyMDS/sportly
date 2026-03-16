@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'dashboard',
+  middleware: 'auth'
 })
 
 useHead({
@@ -299,7 +300,7 @@ watch([selectedType, selectedSport, selectedDateRange, customDateFrom, customDat
       <NuxtLink
         v-for="evt in events"
         :key="evt.id"
-        :to="`/events/${evt.id}`"
+        :to="`/dashboard/events/${evt.id}`"
         class="event-card bg-white border border-[#d6d6d6] p-4 flex flex-col gap-3 no-underline"
       >
         <!-- Header -->

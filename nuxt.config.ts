@@ -31,8 +31,8 @@ export default defineNuxtConfig({
     // Variables publiques (exposées côté client)
     public: {
       betterAuthUrl: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
-      redirectUserTo: '/dashboard/user',
-      redirectClubTo: '/dashboard/club',
+      redirectUserTo: '/dashboard',
+      redirectClubTo: '/dashboard/mon-club',
       redirectDefaultTo: '/'
     }
   },

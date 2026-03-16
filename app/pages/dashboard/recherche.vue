@@ -3,7 +3,8 @@ import ClubDetailsCard from '~/components/dashboard/ClubDetailsCard.vue'
 import SearchFilters from '~/components/dashboard/SearchFilters.vue'
 
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'dashboard',
+  middleware: 'auth'
 })
 
 const LILLE_CENTER: [number, number] = [50.6292, 3.0573]
@@ -182,15 +183,6 @@ watch(filteredClubs, (clubsList) => {
 
 <template>
   <div class="flex flex-col pb-24">
-    <!-- Header with logo -->
-    <div class="bg-white p-4 flex items-center justify-center">
-      <img
-        src="/Nouveau-logo-sportly-1Logo-1@2x.png"
-        alt="Sportly"
-        class="h-7"
-      >
-    </div>
-
     <!-- Search and Filters -->
     <SearchFilters
       v-model:search-query="searchQuery"

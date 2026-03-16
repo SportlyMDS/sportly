@@ -118,11 +118,6 @@ const clubInitials = computed(() => {
 
 <template>
   <div class="flex flex-col font-roboto pb-20">
-    <!-- ── Logo bar ───────────────────────────────────────────────────────── -->
-    <div class="bg-white flex items-center justify-center px-4 py-4">
-      <img src="/long-logo.png" alt="Sportly" class="h-7 w-auto">
-    </div>
-
     <!-- ── Nav bar ────────────────────────────────────────────────────────── -->
     <div class="bg-white flex items-center justify-between px-3 py-1">
       <UButton

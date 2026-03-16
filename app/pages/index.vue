@@ -15,7 +15,7 @@ const handleQuickLogin = async () => {
     const { fetchSession } = useAuth()
     const { error } = await signIn.email({
       email: 'louis.floquet+3@proton.me',
-      password: '***REMOVED***', // à mettre le mot de passe /!\
+      password: '', // à mettre le mot de passe /!\
       fetchOptions: {
         onSuccess: async () => {
           await fetchSession()
@@ -25,7 +25,7 @@ const handleQuickLogin = async () => {
 
     if (error) throw error
 
-    await navigateTo('/dashboard/user')
+    await navigateTo('/dashboard')
   } catch (error) {
     console.error('Quick login failed:', error)
   } finally {
