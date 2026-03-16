@@ -82,30 +82,31 @@ const decorativeShape = '/decorativeShape.png'
 
       <!-- Buttons -->
       <div class="relative z-10 w-full flex flex-col gap-2">
-        <DevOnly>
+        <!-- Demo access -->
+        <div class="flex gap-2 mb-1">
           <UButton
-            color="primary"
+            color="neutral"
             variant="subtle"
             block
-            size="lg"
-            class="rounded-full h-10"
+            size="sm"
+            class="rounded-full flex-1 text-xs"
             :loading="isLoggingInUser"
             @click="handleDemoLogin('user')"
           >
             Demo User
           </UButton>
           <UButton
-            color="secondary"
+            color="neutral"
             variant="subtle"
             block
-            size="lg"
-            class="rounded-full h-10 mb-2"
+            size="sm"
+            class="rounded-full flex-1 text-xs"
             :loading="isLoggingInClub"
             @click="handleDemoLogin('club')"
           >
             Demo Club
           </UButton>
-        </DevOnly>
+        </div>
         <UButton
           to="/auth/login"
           block

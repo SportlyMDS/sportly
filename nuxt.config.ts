@@ -42,6 +42,10 @@ export default defineNuxtConfig({
     }
   },
 
+  site: {
+    url: 'https://demo.sportly.dev'
+  },
+
   compatibilityDate: '2025-07-15',
 
   // Custom icon collection
