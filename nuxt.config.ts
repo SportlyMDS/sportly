@@ -33,7 +33,12 @@ export default defineNuxtConfig({
       betterAuthUrl: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
       redirectUserTo: '/dashboard',
       redirectClubTo: '/dashboard/mon-club',
-      redirectDefaultTo: '/'
+      redirectDefaultTo: '/',
+      // Credentials de démo (intentionnellement publics)
+      demoUserEmail: process.env.NUXT_PUBLIC_DEMO_USER_EMAIL || '',
+      demoUserPassword: process.env.NUXT_PUBLIC_DEMO_USER_PASSWORD || '',
+      demoClubEmail: process.env.NUXT_PUBLIC_DEMO_CLUB_EMAIL || '',
+      demoClubPassword: process.env.NUXT_PUBLIC_DEMO_CLUB_PASSWORD || ''
     }
   },
 
