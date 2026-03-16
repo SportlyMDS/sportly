@@ -17,6 +17,10 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  site: {
+    url: 'https://demo.sportly.dev'
+  },
+
   ui: {
     colorMode: false
   },
@@ -40,10 +44,6 @@ export default defineNuxtConfig({
       demoClubEmail: process.env.NUXT_PUBLIC_DEMO_CLUB_EMAIL || '',
       demoClubPassword: process.env.NUXT_PUBLIC_DEMO_CLUB_PASSWORD || ''
     }
-  },
-
-  site: {
-    url: 'https://demo.sportly.dev'
   },
 
   compatibilityDate: '2025-07-15',
