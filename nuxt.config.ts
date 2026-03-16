@@ -32,7 +32,7 @@ export default defineNuxtConfig({
     public: {
       betterAuthUrl: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
       redirectUserTo: '/dashboard',
-      redirectClubTo: '/dashboard/club',
+      redirectClubTo: '/dashboard/mon-club',
       redirectDefaultTo: '/'
     }
   },

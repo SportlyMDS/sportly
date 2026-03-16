@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: false,
+  layout: 'dashboard',
   middleware: 'auth'
 })
 
@@ -135,7 +135,7 @@ async function handleSubmit() {
       description: 'Les modifications ont été enregistrées',
       color: 'success'
     })
-    await navigateTo(`/events/${id}`)
+    await navigateTo(`/dashboard/events/${id}`)
   } catch (err: unknown) {
     const errorMessage = err && typeof err === 'object' && 'data' in err
       ? (err.data as { message?: string })?.message || 'Une erreur est survenue'

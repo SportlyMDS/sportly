@@ -40,7 +40,7 @@ export const useAuth = (): UseAuthReturn => {
   })
   const options: RuntimeAuthConfig = defu(useRuntimeConfig().public.auth as Partial<RuntimeAuthConfig>, {
     redirectUserTo: '/dashboard',
-    redirectClubTo: '/dashboard/club',
+    redirectClubTo: '/dashboard/mon-club',
     redirectDefaultTo: '/'
   })
 

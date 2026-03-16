@@ -19,7 +19,7 @@ const { data: eventsResponse, status, refresh } = useFetch('/api/events', {
     organizerId: user.value?.id,
     limit: 50
   })),
-  key: 'user-events',
+  key: 'club-events',
   watch: [() => user.value?.id]
 })
 
@@ -97,7 +97,7 @@ async function deleteEvent(eventId: string) {
         </h1>
       </div>
       <NuxtLink
-        to="/dashboard/user/events/new"
+        to="/dashboard/mon-club/events/new"
         class="bg-tango-500 hover:bg-tango-600 text-white text-sm font-semibold px-4 py-2.5 rounded-full font-montserrat transition-colors flex items-center gap-2"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -159,7 +159,7 @@ async function deleteEvent(eventId: string) {
       </p>
       <NuxtLink
         v-if="activeTab === 'upcoming'"
-        to="/dashboard/user/events/new"
+        to="/dashboard/mon-club/events/new"
         class="bg-tango-500 hover:bg-tango-600 text-white text-sm font-semibold px-6 py-3 rounded-full font-montserrat transition-colors"
       >
         Créer un événement
@@ -183,7 +183,7 @@ async function deleteEvent(eventId: string) {
           </span>
           <div class="flex items-center gap-1">
             <NuxtLink
-              :to="`/dashboard/user/events/${evt.id}/edit`"
+              :to="`/dashboard/mon-club/events/${evt.id}/edit`"
               class="size-8 flex items-center justify-center rounded-lg hover:bg-[#f0f0f0] transition-colors"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -202,7 +202,7 @@ async function deleteEvent(eventId: string) {
         </div>
 
         <!-- Title -->
-        <NuxtLink :to="`/events/${evt.id}`" class="text-base font-semibold text-[#1c1c1c] font-asap hover:text-tango-500 transition-colors">
+        <NuxtLink :to="`/dashboard/events/${evt.id}`" class="text-base font-semibold text-[#1c1c1c] font-asap hover:text-tango-500 transition-colors">
           {{ evt.title }}
         </NuxtLink>
 

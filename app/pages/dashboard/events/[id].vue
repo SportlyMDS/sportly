@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'dashboard',
+  middleware: 'auth'
 })
 
 const route = useRoute()
@@ -161,7 +162,7 @@ async function handleRegister() {
         <p class="text-xl font-semibold text-[#1c1c1c] font-asap">
           Événement introuvable
         </p>
-        <NuxtLink to="/events" class="text-tango-500 text-sm underline font-roboto">Retour aux événements</NuxtLink>
+        <NuxtLink to="/dashboard/events" class="text-tango-500 text-sm underline font-roboto">Retour aux événements</NuxtLink>
       </div>
     </template>
 

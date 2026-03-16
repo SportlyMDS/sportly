@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(() => {
   if (loggedIn.value) {
     const accountType = (user.value as any)?.accountType
     if (accountType === 'CLUB') {
-      return navigateTo(options.redirectClubTo || '/dashboard/club')
+      return navigateTo(options.redirectClubTo || '/dashboard/mon-club')
     }
     return navigateTo(options.redirectUserTo || '/dashboard')
   }

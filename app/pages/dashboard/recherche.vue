@@ -3,7 +3,8 @@ import ClubDetailsCard from '~/components/dashboard/ClubDetailsCard.vue'
 import SearchFilters from '~/components/dashboard/SearchFilters.vue'
 
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'dashboard',
+  middleware: 'auth'
 })
 
 const LILLE_CENTER: [number, number] = [50.6292, 3.0573]
