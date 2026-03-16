@@ -78,12 +78,13 @@ export default defineEventHandler(async (event) => {
 
     const accountId = signUpResult.user.id
 
-    // 3. Mettre à jour le type de compte en CLUB
+    // 3. Mettre à jour le type de compte en CLUB + marquer email vérifié (OTP validé à l'étape 1)
     await db
       .update(accounts)
       .set({
         accountType: 'CLUB',
-        phone: data.phone
+        phone: data.phone,
+        emailVerified: true
       })
       .where(eq(accounts.id, accountId))
 

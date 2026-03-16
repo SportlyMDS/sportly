@@ -162,14 +162,14 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Mot de passe requis')
 })
 
-const handleLogin = async (data: any) => {
+const handleLogin = async (_data: any) => {
   isLoading.value = true
 
   try {
     const { fetchSession } = useAuth()
-    const { error } = await signIn.email({
-      email: data.email,
-      password: data.password,
+    const result = await signIn.email({
+      email: loginForm.email,
+      password: loginForm.password,
       fetchOptions: {
         onSuccess: async () => {
           await fetchSession()
@@ -177,7 +177,7 @@ const handleLogin = async (data: any) => {
       }
     })
 
-    if (error) throw error
+    if (result.error) throw result.error
 
     toast.add({
       title: 'Connexion réussie',
@@ -186,7 +186,7 @@ const handleLogin = async (data: any) => {
     })
 
     await fetchSession()
-    window.location.href = '/dashboard/user'
+    window.location.href = '/'
   } catch {
     toast.add({
       title: 'Erreur de connexion',
