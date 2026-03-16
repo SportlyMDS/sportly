@@ -4,6 +4,7 @@ definePageMeta({
 })
 
 const route = useRoute()
+const router = useRouter()
 const id = route.params.id as string
 const toast = useToast()
 
@@ -16,6 +17,52 @@ const isError = computed(() => status.value === 'error' && (error.value as any)?
 const notFound = computed(() => status.value === 'error' && (error.value as any)?.statusCode === 404)
 
 const isRegistering = ref(false)
+
+async function copyToClipboard(text: string) {
+  if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+
+  if (typeof document === 'undefined') {
+    throw new TypeError('Clipboard unavailable')
+  }
+
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.setAttribute('readonly', '')
+  textarea.style.position = 'fixed'
+  textarea.style.top = '0'
+  textarea.style.left = '0'
+  textarea.style.opacity = '0'
+  document.body.appendChild(textarea)
+  textarea.focus()
+  textarea.select()
+  const ok = document.execCommand('copy')
+  document.body.removeChild(textarea)
+
+  if (!ok) {
+    throw new Error('Copy failed')
+  }
+}
+
+async function handleShare() {
+  try {
+    if (typeof window === 'undefined') return
+    await copyToClipboard(window.location.href)
+    toast.add({
+      title: 'Lien copié',
+      description: 'Le lien de l\'événement a été copié dans le presse-papiers.',
+      color: 'success'
+    })
+  } catch {
+    toast.add({
+      title: 'Erreur',
+      description: 'Impossible de copier le lien.',
+      color: 'error'
+    })
+  }
+}
 
 useHead({
   title: computed(() => event.value ? `${(event.value as any).title} - Sportly` : 'Événement - Sportly')
@@ -127,22 +174,45 @@ async function handleRegister() {
 
       <!-- Nav bar: back + actions -->
       <div class="flex items-center justify-between px-4 h-16">
-        <button class="size-10 flex items-center justify-center rounded-lg" @click="$router.back()">
+        <UButton
+          color="neutral"
+          variant="ghost"
+          size="md"
+          square
+          class="size-10 rounded-lg"
+          aria-label="Retour"
+          @click="router.back()"
+        >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M15 18L9 12L15 6" stroke="#1c1c1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-        </button>
+        </UButton>
         <div class="flex items-center gap-2">
-          <button class="size-9 flex items-center justify-center">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            square
+            class="size-9"
+            aria-label="Partager"
+            @click="handleShare"
+          >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M3.33 8.33V13.33C3.33 14.25 4.08 15 5 15H15C15.92 15 16.67 14.25 16.67 13.33V8.33M10 3.33V11.67M10 3.33L13.33 6.67M10 3.33L6.67 6.67" stroke="#1c1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-          </button>
-          <button class="size-9 flex items-center justify-center">
+          </UButton>
+          <UButton
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            square
+            class="size-9"
+            aria-label="Ajouter aux favoris"
+          >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M10 17.5L2.5 10C1.12 8.62 1.12 6.38 2.5 5C3.88 3.62 6.12 3.62 7.5 5L10 7.5L12.5 5C13.88 3.62 16.12 3.62 17.5 5C18.88 6.38 18.88 8.62 17.5 10L10 17.5Z" stroke="#1c1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-          </button>
+          </UButton>
         </div>
       </div>
 
