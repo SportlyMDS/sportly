@@ -35,14 +35,14 @@ const emit = defineEmits<{
 <template>
   <div class="px-4 pb-4 flex flex-col gap-4">
     <div class="flex items-start gap-3">
-      <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-gray-200">
+      <NuxtLink to="/dashboard/clubs/preview" class="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-gray-200 block">
         <img
           :src="club.image"
           :alt="club.name"
           class="w-full h-full object-cover"
           @error="($event.target as HTMLImageElement).src = 'https://via.placeholder.com/64x64?text=Club'"
         >
-      </div>
+      </NuxtLink>
 
       <div class="flex-1 min-w-0">
         <div class="flex items-start justify-between gap-2">
