@@ -177,7 +177,7 @@ async function handleSubmit() {
       <!-- Action buttons -->
       <div class="px-4 pb-4 flex flex-col gap-3">
         <NuxtLink
-          :to="`/events/${createdEventId}`"
+          :to="`/dashboard/events/${createdEventId}`"
           class="w-full h-10 rounded-full bg-[#ef781e] hover:bg-[#e05f16] text-white font-semibold text-base font-montserrat flex items-center justify-center gap-2 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
