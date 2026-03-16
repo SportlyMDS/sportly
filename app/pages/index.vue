@@ -6,16 +6,23 @@ definePageMeta({
   layout: 'auth'
 })
 
-const { signIn } = useAuth()
-const isLoggingIn = ref(false)
+const { signIn, fetchSession } = useAuth()
+const config = useRuntimeConfig()
+const isLoggingInUser = ref(false)
+const isLoggingInClub = ref(false)
 
-const handleQuickLogin = async () => {
-  isLoggingIn.value = true
+const handleDemoLogin = async (role: 'user' | 'club') => {
+  const email = role === 'user' ? config.public.demoUserEmail : config.public.demoClubEmail
+  const password = role === 'user' ? config.public.demoUserPassword : config.public.demoClubPassword
+  const redirectTo = role === 'user' ? config.public.redirectUserTo : config.public.redirectClubTo
+
+  if (role === 'user') isLoggingInUser.value = true
+  else isLoggingInClub.value = true
+
   try {
-    const { fetchSession } = useAuth()
     const { error } = await signIn.email({
-      email: 'louis.floquet+3@proton.me',
-      password: '', // à mettre le mot de passe /!\
+      email,
+      password,
       fetchOptions: {
         onSuccess: async () => {
           await fetchSession()
@@ -25,11 +32,12 @@ const handleQuickLogin = async () => {
 
     if (error) throw error
 
-    await navigateTo('/dashboard')
+    await navigateTo(redirectTo)
   } catch (error) {
-    console.error('Quick login failed:', error)
+    console.error(`Demo ${role} login failed:`, error)
   } finally {
-    isLoggingIn.value = false
+    if (role === 'user') isLoggingInUser.value = false
+    else isLoggingInClub.value = false
   }
 }
 
@@ -77,14 +85,25 @@ const decorativeShape = '/decorativeShape.png'
         <DevOnly>
           <UButton
             color="primary"
-            variant="solid"
+            variant="subtle"
+            block
+            size="lg"
+            class="rounded-full h-10"
+            :loading="isLoggingInUser"
+            @click="handleDemoLogin('user')"
+          >
+            Demo User
+          </UButton>
+          <UButton
+            color="secondary"
+            variant="subtle"
             block
             size="lg"
             class="rounded-full h-10 mb-2"
-            :loading="isLoggingIn"
-            @click="handleQuickLogin"
+            :loading="isLoggingInClub"
+            @click="handleDemoLogin('club')"
           >
-            Quick Login (Dev)
+            Demo Club
           </UButton>
         </DevOnly>
         <UButton
