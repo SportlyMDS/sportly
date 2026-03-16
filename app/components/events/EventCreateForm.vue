@@ -151,14 +151,9 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="w-[393px] min-h-screen bg-white max-w-full overflow-hidden flex flex-col mx-auto">
+  <div class="flex flex-col min-h-[calc(100vh-120px)]">
     <!-- ========== SUCCESS SCREEN (Félicitation) ========== -->
     <template v-if="isSuccess">
-      <!-- Header: Logo -->
-      <div class="bg-white flex items-center justify-center p-4">
-        <img src="/long-logo.png" alt="Sportly" class="w-[120px] h-auto object-cover">
-      </div>
-
       <main class="flex-1 flex flex-col items-center justify-center px-4">
         <!-- Confetti icon -->
         <div class="w-[120px] h-[120px] rounded-full bg-[#ef781e] flex items-center justify-center mb-6">
@@ -206,11 +201,6 @@ async function handleSubmit() {
 
     <!-- ========== FORM STEPS ========== -->
     <template v-else>
-      <!-- Header: Logo -->
-      <div class="bg-white flex items-center justify-center p-4">
-        <img src="/long-logo.png" alt="Sportly" class="w-[120px] h-auto object-cover">
-      </div>
-
       <!-- Sub-header: Back + Step indicator -->
       <div class="bg-white border-b border-[#d6d6d6] px-4 pt-4 pb-4">
         <!-- Back button row -->
@@ -736,102 +726,6 @@ async function handleSubmit() {
         </Transition>
       </main>
     </template>
-
-    <!-- Bottom Nav -->
-    <nav class="shrink-0 bg-white border-t border-[#d6d6d6] py-2">
-      <div class="flex items-center justify-around">
-        <NuxtLink to="/dashboard" class="flex flex-col items-center gap-1 py-2 px-3 text-[#545454]">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          <span class="text-xs font-montserrat">Accueil</span>
-        </NuxtLink>
-        <NuxtLink to="/dashboard/recherche" class="flex flex-col items-center gap-1 py-2 px-3 text-[#545454]">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle
-              cx="11"
-              cy="11"
-              r="8"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          <span class="text-xs font-montserrat">Recherche</span>
-        </NuxtLink>
-        <div class="flex flex-col items-center gap-1 py-2 px-3 text-[#e97217]">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          <span class="text-xs font-bold font-montserrat">Créer</span>
-        </div>
-        <NuxtLink to="/events" class="flex flex-col items-center gap-1 py-2 px-3 text-[#545454]">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect
-              x="3"
-              y="4"
-              width="18"
-              height="18"
-              rx="2"
-              ry="2"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <line
-              x1="16"
-              y1="2"
-              x2="16"
-              y2="6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <line
-              x1="8"
-              y1="2"
-              x2="8"
-              y2="6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <line
-              x1="3"
-              y1="10"
-              x2="21"
-              y2="10"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          <span class="text-xs font-montserrat">Événements</span>
-        </NuxtLink>
-        <NuxtLink to="/dashboard/profil" class="flex flex-col items-center gap-1 py-2 px-3 text-[#545454]">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <circle
-              cx="12"
-              cy="7"
-              r="4"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          <span class="text-xs font-montserrat">Profil</span>
-        </NuxtLink>
-      </div>
-    </nav>
   </div>
 </template>
 
