@@ -17,6 +17,9 @@ export interface InscriptionClubData {
   phone: string
   password: string
   confirmPassword: string
+
+  // Step 5: OTP verification
+  verificationCode: string
 }
 
 export interface InscriptionClubState {
@@ -32,7 +35,7 @@ export interface InscriptionClubState {
   clubId: string | null
 }
 
-export const TOTAL_STEPS_CLUB = 4
+export const TOTAL_STEPS_CLUB = 5
 
 export const useInscriptionClub = () => {
   const route = useRoute()
@@ -54,7 +57,8 @@ export const useInscriptionClub = () => {
       email: '',
       phone: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      verificationCode: ''
     },
     isLoading: false,
     error: null,
@@ -122,7 +126,8 @@ export const useInscriptionClub = () => {
         email: '',
         phone: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        verificationCode: ''
       },
       isLoading: false,
       error: null,

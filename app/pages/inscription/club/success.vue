@@ -7,20 +7,12 @@ function goBack() {
   navigateTo('/inscription/club/offre')
 }
 
-function addRooms() {
-  // TODO: Navigate to add rooms page
-  console.log('Add rooms')
-  navigateTo('/dashboard/club/salles/new')
-}
-
 function createEvent() {
-  // TODO: Navigate to create event page
-  console.log('Create event')
-  navigateTo('/dashboard/club/events/new')
+  navigateTo('/dashboard/mon-club/events/new')
 }
 
 function skipForNow() {
-  navigateTo('/dashboard/club')
+  navigateTo('/dashboard/mon-club')
 }
 </script>
 
@@ -97,15 +89,6 @@ function skipForNow() {
         <!-- Boutons d'action -->
         <div class="flex flex-col gap-3 w-full max-w-[352px] mt-8">
           <UButton
-            block
-            class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3!"
-            @click="addRooms"
-          >
-            Ajouter des salles
-          </UButton>
-
-          <UButton
-            to="/dashboard/club"
             block
             size="lg"
             class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! font-montserrat! text-base! rounded-[50px]! py-3!"
