@@ -167,11 +167,6 @@ async function handleRegister() {
 
     <!-- Event content -->
     <template v-else-if="event">
-      <!-- Logo -->
-      <div class="flex justify-center px-4 py-4">
-        <img src="/long-logo.png" alt="Sportly" class="h-7">
-      </div>
-
       <!-- Nav bar: back + actions -->
       <div class="flex items-center justify-between px-4 h-16">
         <UButton

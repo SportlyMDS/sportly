@@ -202,10 +202,10 @@ const handleLogin = async (_data: any) => {
 }
 
 const handleGoogleLogin = () => {
-  signIn.social({ provider: 'google', callbackURL: '/dashboard/user' })
+  signIn.social({ provider: 'google', callbackURL: '/dashboard' })
 }
 
 const handleFacebookLogin = () => {
-  signIn.social({ provider: 'facebook', callbackURL: '/dashboard/user' })
+  signIn.social({ provider: 'facebook', callbackURL: '/dashboard' })
 }
 </script>

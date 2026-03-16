@@ -1,9 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'dashboard',
+  middleware: 'auth'
 })
 
-const userName = ref('Coralie')
+const { user } = useAuth()
+const userName = computed(() => user.value?.name?.split(' ')[0] || '')
 const searchQuery = ref('')
 
 // Filtres
@@ -155,7 +157,7 @@ const filteredEvents = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 pb-24">
+  <div class="flex flex-col gap-6 px-4 pb-24">
     <!-- Header -->
     <h1 class="text-3xl font-semibold text-[#1c1c1c] tracking-tight font-asap">
       Bonjour, {{ userName }}. 👋
@@ -216,7 +218,7 @@ const filteredEvents = computed(() => {
           class="shrink-0 px-4 py-2 rounded-full text-base font-roboto transition-colors"
           :class="[
             activeFilter === filter
-              ? 'bg-tango-500 text-[#313131]'
+              ? 'bg-tango-500 text-white'
               : 'bg-white border border-[#d6d6d6] text-[#c45400]'
           ]"
           @click="activeFilter = filter"

@@ -155,10 +155,6 @@ async function handleSubmit() {
   <div class="w-[393px] min-h-screen bg-white max-w-full overflow-hidden flex flex-col mx-auto">
     <!-- Header -->
     <header class="shrink-0">
-      <div class="flex justify-center px-4 py-4">
-        <img src="/long-logo.png" alt="Sportly" class="h-7">
-      </div>
-
       <div class="px-4 py-4">
         <button class="flex items-center gap-2 text-gray-500" @click="router.back()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

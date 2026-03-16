@@ -230,7 +230,7 @@ const handleFinalSubmit = async () => {
     })
 
     // Rediriger vers l'application
-    await navigateTo('/dashboard/user')
+    await navigateTo('/dashboard')
   } catch (error) {
     console.error('Erreur finalisation:', error)
     toast.add({

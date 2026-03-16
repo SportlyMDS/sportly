@@ -25,6 +25,11 @@ function isActive(path: string) {
 
 <template>
   <div class="min-h-screen bg-white flex flex-col">
+    <!-- Header -->
+    <header class="w-full bg-white p-4 flex items-center justify-center">
+      <img src="/long-logo.png" alt="Sportly" class="h-[27px] w-auto">
+    </header>
+
     <!-- Main content -->
     <main class="w-full flex-1 pt-5 pb-20">
       <slot />
