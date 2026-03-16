@@ -163,6 +163,7 @@ const loginSchema = z.object({
 })
 
 const handleLogin = async (_data: any) => {
+const handleLogin = async (_data: any) => {
   isLoading.value = true
 
   try {
@@ -179,6 +180,7 @@ const handleLogin = async (_data: any) => {
     })
     console.log('SignIn result:', JSON.stringify(result))
 
+    if (result.error) throw result.error
     if (result.error) throw result.error
 
     toast.add({
