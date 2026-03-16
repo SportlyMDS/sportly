@@ -10,8 +10,11 @@ const { signIn, fetchSession } = useAuth()
 const config = useRuntimeConfig()
 const isLoggingInUser = ref(false)
 const isLoggingInClub = ref(false)
+const isDemoLoading = computed(() => isLoggingInUser.value || isLoggingInClub.value)
 
 const handleDemoLogin = async (role: 'user' | 'club') => {
+  if (isDemoLoading.value) return
+
   const email = role === 'user' ? config.public.demoUserEmail : config.public.demoClubEmail
   const password = role === 'user' ? config.public.demoUserPassword : config.public.demoClubPassword
   const redirectTo = role === 'user' ? config.public.redirectUserTo : config.public.redirectClubTo
@@ -91,6 +94,7 @@ const decorativeShape = '/decorativeShape.png'
             size="sm"
             class="rounded-full flex-1 text-xs"
             :loading="isLoggingInUser"
+            :disabled="isDemoLoading"
             @click="handleDemoLogin('user')"
           >
             Demo User
@@ -102,6 +106,7 @@ const decorativeShape = '/decorativeShape.png'
             size="sm"
             class="rounded-full flex-1 text-xs"
             :loading="isLoggingInClub"
+            :disabled="isDemoLoading"
             @click="handleDemoLogin('club')"
           >
             Demo Club
