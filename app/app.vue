@@ -3,6 +3,12 @@ useSeoMeta({
   title: 'Sportly',
   description: 'Sportly - Votre plateforme de gestion de club'
 })
+
+useHead({
+  link: [
+    { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }
+  ]
+})
 </script>
 
 <template>

@@ -10,8 +10,11 @@ const { signIn, fetchSession } = useAuth()
 const config = useRuntimeConfig()
 const isLoggingInUser = ref(false)
 const isLoggingInClub = ref(false)
+const isDemoLoading = computed(() => isLoggingInUser.value || isLoggingInClub.value)
 
 const handleDemoLogin = async (role: 'user' | 'club') => {
+  if (isDemoLoading.value) return
+
   const email = role === 'user' ? config.public.demoUserEmail : config.public.demoClubEmail
   const password = role === 'user' ? config.public.demoUserPassword : config.public.demoClubPassword
   const redirectTo = role === 'user' ? config.public.redirectUserTo : config.public.redirectClubTo
@@ -82,30 +85,33 @@ const decorativeShape = '/decorativeShape.png'
 
       <!-- Buttons -->
       <div class="relative z-10 w-full flex flex-col gap-2">
-        <DevOnly>
+        <!-- Demo access -->
+        <div class="flex gap-2 mb-1">
           <UButton
-            color="primary"
+            color="neutral"
             variant="subtle"
             block
-            size="lg"
-            class="rounded-full h-10"
+            size="sm"
+            class="rounded-full flex-1 text-xs"
             :loading="isLoggingInUser"
+            :disabled="isDemoLoading"
             @click="handleDemoLogin('user')"
           >
             Demo User
           </UButton>
           <UButton
-            color="secondary"
+            color="neutral"
             variant="subtle"
             block
-            size="lg"
-            class="rounded-full h-10 mb-2"
+            size="sm"
+            class="rounded-full flex-1 text-xs"
             :loading="isLoggingInClub"
+            :disabled="isDemoLoading"
             @click="handleDemoLogin('club')"
           >
             Demo Club
           </UButton>
-        </DevOnly>
+        </div>
         <UButton
           to="/auth/login"
           block
