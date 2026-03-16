@@ -1,18 +1,17 @@
 import { z } from 'zod'
-import { eq } from 'drizzle-orm'
 import { useDrizzle } from '../../utils/drizzle'
-import { events, eventSports, accounts } from '../../db/schema'
+import { events, eventSports } from '../../db/schema'
 import { serverAuth } from '../../utils/auth'
 
 const createEventSchema = z.object({
   eventType: z.enum(['STAGE', 'TOURNOI', 'ENTRAINEMENT', 'DECOUVERTE']),
   title: z.string().min(3).max(160),
-  description: z.string().min(10).optional(),
+  description: z.string().min(1).optional(),
   addressId: z.string().uuid().optional(),
   startTime: z.string().datetime(),
   endTime: z.string().datetime(),
   levelRequired: z.array(z.string()).min(1),
-  audience: z.array(z.string()).min(1),
+  audience: z.array(z.string()).optional().default(['TOUS']),
   accessibility: z.array(z.string()).optional(),
   paymentProvider: z.string().max(40).optional(),
   price: z.coerce.number().min(0).default(0),
@@ -33,21 +32,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Vérifier que le compte est de type CLUB
   const db = useDrizzle()
-
-  const accountResult = await db
-    .select({ accountType: accounts.accountType })
-    .from(accounts)
-    .where(eq(accounts.id, session.user.id))
-    .limit(1)
-
-  if (!accountResult[0] || accountResult[0].accountType !== 'CLUB') {
-    throw createError({
-      statusCode: 403,
-      message: 'Seuls les comptes CLUB peuvent créer des événements'
-    })
-  }
 
   const body = await readBody(event)
 
