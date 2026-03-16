@@ -2,7 +2,8 @@
 import type { InscriptionClubData } from '~/composables/useInscriptionClub'
 
 definePageMeta({
-  layout: false
+  layout: false,
+  middleware: 'guest'
 })
 
 const {
@@ -15,12 +16,7 @@ const {
 } = useInscriptionClub()
 
 const toast = useToast()
-
-// OTP verification state
-const showOtpModal = ref(false)
-const otpCode = ref('')
-const otpLoading = ref(false)
-const otpError = ref<string | null>(null)
+const { fetchSession } = useAuth()
 
 // Update sports array
 function handleSportsUpdate(sports: string[]) {
@@ -40,13 +36,12 @@ function handleBack() {
   }
 }
 
-// Step 1: Send OTP when form is submitted
+// Step 4 → 5: Send OTP then move to OTP step
 async function handleSubmit() {
   state.value.isLoading = true
   state.value.error = null
 
   try {
-    // Send OTP to verify email
     const response = await $fetch('/api/auth/send-otp', {
       method: 'POST',
       body: {
@@ -56,7 +51,7 @@ async function handleSubmit() {
     })
 
     if (response.success) {
-      showOtpModal.value = true
+      nextStep()
       toast.add({
         title: 'Code envoyé',
         description: 'Un code de vérification a été envoyé à votre adresse email',
@@ -78,47 +73,42 @@ async function handleSubmit() {
   }
 }
 
-// Step 2: Verify OTP
-async function handleVerifyOtp() {
-  if (otpCode.value.length !== 6) {
-    otpError.value = 'Le code doit contenir 6 chiffres'
-    return
-  }
-
-  otpLoading.value = true
-  otpError.value = null
+// Step 5: Verify OTP then create club
+async function handleVerifyAndCreate(code: string) {
+  state.value.isLoading = true
+  state.value.error = null
 
   try {
-    const response = await $fetch('/api/auth/verify-otp', {
+    const verifyResponse = await $fetch('/api/auth/verify-otp', {
       method: 'POST',
       body: {
         email: state.value.data.email,
-        code: otpCode.value
+        code
       }
     })
 
-    if (response.success) {
-      state.value.verificationId = response.verificationId
+    if (verifyResponse.success) {
+      state.value.verificationId = verifyResponse.verificationId
       state.value.emailVerified = true
-      showOtpModal.value = false
-
-      // Proceed to create club
       await handleCreateClub()
     }
   } catch (error: unknown) {
     console.error('Verify OTP error:', error)
-    otpError.value = error && typeof error === 'object' && 'data' in error
+    const errorMessage = error && typeof error === 'object' && 'data' in error
       ? (error.data as { message?: string })?.message || 'Code invalide'
       : 'Code invalide'
+    toast.add({
+      title: 'Erreur',
+      description: errorMessage,
+      color: 'error'
+    })
   } finally {
-    otpLoading.value = false
+    state.value.isLoading = false
   }
 }
 
-// Step 3: Create club account
+// Create club account
 async function handleCreateClub() {
-  state.value.isLoading = true
-
   try {
     const response = await $fetch<{ success: boolean, clubId: string }>('/api/clubs', {
       method: 'POST',
@@ -140,13 +130,13 @@ async function handleCreateClub() {
 
     if (response.success) {
       state.value.clubId = response.clubId
+      await fetchSession()
       toast.add({
         title: 'Club créé !',
         description: 'Votre club a été créé avec succès',
         color: 'success'
       })
 
-      // Navigate to offer selection
       await navigateTo('/inscription/club/offre')
     }
   } catch (error: unknown) {
@@ -159,16 +149,11 @@ async function handleCreateClub() {
       description: errorMessage,
       color: 'error'
     })
-  } finally {
-    state.value.isLoading = false
   }
 }
 
 // Resend OTP
 async function handleResendOtp() {
-  otpLoading.value = true
-  otpError.value = null
-
   try {
     await $fetch('/api/auth/send-otp', {
       method: 'POST',
@@ -183,14 +168,16 @@ async function handleResendOtp() {
       description: 'Un nouveau code a été envoyé à votre adresse email',
       color: 'success'
     })
-    otpCode.value = ''
   } catch (error: unknown) {
     console.error('Resend OTP error:', error)
-    otpError.value = error && typeof error === 'object' && 'data' in error
+    const errorMessage = error && typeof error === 'object' && 'data' in error
       ? (error.data as { message?: string })?.message || 'Une erreur est survenue'
       : 'Une erreur est survenue'
-  } finally {
-    otpLoading.value = false
+    toast.add({
+      title: 'Erreur',
+      description: errorMessage,
+      color: 'error'
+    })
   }
 }
 </script>
@@ -246,66 +233,15 @@ async function handleResendOtp() {
           @update="handleUpdate"
           @submit="handleSubmit"
         />
+        <InscriptionClubStep4OTP
+          v-else-if="currentStep === 5"
+          :data="state.data"
+          :is-loading="state.isLoading"
+          @next="handleVerifyAndCreate"
+          @resend="handleResendOtp"
+        />
       </Transition>
     </main>
-
-    <!-- OTP Verification Modal -->
-    <UModal v-model:open="showOtpModal">
-      <template #content>
-        <div class="p-6">
-          <div class="flex flex-col items-center gap-6">
-            <div class="text-5xl">
-              📧
-            </div>
-
-            <div class="text-center">
-              <h2 class="text-xl font-semibold text-gray-900 mb-2">
-                Vérifiez votre email
-              </h2>
-              <p class="text-gray-600">
-                Un code de vérification a été envoyé à
-                <span class="font-medium">{{ state.data.email }}</span>
-              </p>
-            </div>
-
-            <div class="w-full max-w-xs">
-              <UFormField label="Code de vérification" :error="otpError || undefined">
-                <UInput
-                  v-model="otpCode"
-                  placeholder="000000"
-                  class="w-full text-center text-2xl tracking-widest"
-                  size="xl"
-                  maxlength="6"
-                  inputmode="numeric"
-                  pattern="[0-9]*"
-                />
-              </UFormField>
-            </div>
-
-            <div class="flex flex-col gap-3 w-full max-w-xs">
-              <UButton
-                block
-                :loading="otpLoading"
-                :disabled="otpCode.length !== 6"
-                class="bg-tango-500! hover:bg-tango-600! text-white! font-semibold! rounded-[50px]! py-3!"
-                @click="handleVerifyOtp"
-              >
-                Vérifier
-              </UButton>
-
-              <button
-                type="button"
-                class="text-sm text-gray-500 hover:text-gray-700 underline"
-                :disabled="otpLoading"
-                @click="handleResendOtp"
-              >
-                Renvoyer le code
-              </button>
-            </div>
-          </div>
-        </div>
-      </template>
-    </UModal>
   </div>
 </template>
 
