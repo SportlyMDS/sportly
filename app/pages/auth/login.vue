@@ -167,6 +167,7 @@ const handleLogin = async (_data: any) => {
 
   try {
     const { fetchSession } = useAuth()
+    console.log('Login attempt with:', loginForm.email)
     const result = await signIn.email({
       email: loginForm.email,
       password: loginForm.password,
@@ -176,6 +177,7 @@ const handleLogin = async (_data: any) => {
         }
       }
     })
+    console.log('SignIn result:', JSON.stringify(result))
 
     if (result.error) throw result.error
 
@@ -187,7 +189,8 @@ const handleLogin = async (_data: any) => {
 
     await fetchSession()
     window.location.href = '/'
-  } catch {
+  } catch (err) {
+    console.error('Login error details:', err)
     toast.add({
       title: 'Erreur de connexion',
       description: 'Email ou mot de passe incorrect',
